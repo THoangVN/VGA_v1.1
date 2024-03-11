@@ -595,7 +595,7 @@ module pixel_gen(
                 rgb = rom_road;
                     
             else if(water_on)
-                rgb = rom_sand;
+                rgb = rom_sand;xb
 
         end
     end
