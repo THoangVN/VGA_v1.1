@@ -15,7 +15,6 @@ module pixel_gen(
     // 60Hz refresh tick
     wire refresh_tick;
     assign refresh_tick = ((y == 491) && (x == 0)) ? 1 : 0; // start of vsync(vertical retrace)
-	 
 //------------------------------------------------------//
 //                   MAP SETTING                        //
 //------------------------------------------------------//
@@ -23,7 +22,7 @@ module pixel_gen(
     wire hit, hit_by_enemy;
     wire [number_of_brick-1:0] stop_up, stop_down, stop_left, stop_right ;
     wire [number_of_brick-1:0] stop_enemy_up, stop_enemy_down, stop_enemy_left, stop_enemy_right ;
- 	wire [number_of_brick-1:0] brick_on;
+    wire [number_of_brick-1:0] brick_on;
     wire wall_on;
     wire [29:0] brick_rom;
     wire [29:0] wall_rom;
@@ -234,7 +233,6 @@ module pixel_gen(
     // **** MULTIPLEX tank ROMS ****
     wire [29:0] tank_rom;
     wire [29:0] rom_data1, rom_data2, rom_data3, rom_data4, rom_data5;
-      
     reg [1:0] tank_select;
     bit [1:0] bullet_select ;
 
@@ -257,7 +255,7 @@ module pixel_gen(
                 tank_select = 2'b11;
         end
     end
-         
+    
     assign tank_rom = (hold_tank_detroyed != 0) ? rom_data5 : (tank_select == 2'b00) ? rom_data1 : (tank_select == 2'b01) ? rom_data2 : (tank_select == 2'b10) ? rom_data3 : rom_data4 ;
 
 //------------------------------------------------------//
@@ -273,8 +271,8 @@ module pixel_gen(
                         .x(x),              
                         .y(y),              
                         .refresh_tick(refresh_tick),
-                        // .x_enemy_bullet(x_bullet_enemy),
-                        // .y_enemy_bullet(y_bullet_enemy),
+                        .x_enemy_bullet(x_bullet_enemy),
+                        .y_enemy_bullet(y_bullet_enemy),
                         // .x_tank_bullet(sq_x_next),
                         // .y_tank_bullet(sq_y_next),
                         .x_eagle(x_eagle),
