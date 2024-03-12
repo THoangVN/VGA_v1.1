@@ -54,8 +54,8 @@ module vga(
       if(VGA_CLK)
          rgb_reg <= rgb_next;
 
-   assign VGA_BLANK = 0;//hsync & vsync;
-   assign VGA_SYNC = 0 ;
+   assign VGA_BLANK = 1;//SW[2];//hsync & vsync;
+   assign VGA_SYNC = 1;//SW[3] ;
 
 
 endmodule
