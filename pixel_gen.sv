@@ -22,6 +22,7 @@ module pixel_gen(
     wire hit, hit_by_enemy;
     wire [number_of_brick-1:0] stop_up, stop_down, stop_left, stop_right ;
     wire [number_of_brick-1:0] stop_enemy_up, stop_enemy_down, stop_enemy_left, stop_enemy_right ;
+    // wire [number_of_brick-1:0] stop_enemy_up2, stop_enemy_down2, stop_enemy_left2, stop_enemy_right2 ;
     wire [number_of_brick-1:0] brick_on;
     wire wall_on;
     wire [29:0] brick_rom;
@@ -65,14 +66,21 @@ module pixel_gen(
 //------------------------------------------------------//
 //                   ENEMY SETTING                      //
 //------------------------------------------------------//
-    wire enemy_on, bullet_on;
+    wire enemy_on, bullet_on;//, enemy_on_2, bullet_on_2;
     wire [29:0] rom_enemy;
+    // wire [29:0] rom_enemy_2;
     wire [9:0] x_enemy_l;
     wire [9:0] x_enemy_r;
     wire [9:0] y_enemy_t;
     wire [9:0] y_enemy_b;
+    // wire [9:0] x_enemy_l_2;
+    // wire [9:0] x_enemy_r_2;
+    // wire [9:0] y_enemy_t_2;
+    // wire [9:0] y_enemy_b_2;
     wire [9:0] x_bullet_enemy;
     wire [9:0] y_bullet_enemy;
+    // wire [9:0] x_bullet_enemy_2;
+    // wire [9:0] y_bullet_enemy_2;
     wire enemy_detroyed;
     enemy #(number_of_brick) enemy1 (   .clk_50MHz(clk_50MHz),
                                         .reset(reset),                        
@@ -100,6 +108,32 @@ module pixel_gen(
                                         .tank_detroyed(tank_detroyed),
                                         .enemy_detroyed(enemy_detroyed)
                                         );
+    // enemy #(number_of_brick) enemy2 (   .clk_50MHz(clk_50MHz),
+    //                                     .reset(reset),                        
+    //                                     .x(x),                     
+    //                                     .y(y),                     
+    //                                     .refresh_tick(refresh_tick),
+    //                                     .stop_up(stop_enemy_up2),
+    //                                     .stop_down(stop_enemy_down2),
+    //                                     .stop_left(stop_enemy_left2),
+    //                                     .stop_right(stop_enemy_right2),
+    //                                     .x_enemy_r(x_enemy_r_2),
+    //                                     .x_enemy_l(x_enemy_l_2),
+    //                                     .y_enemy_t(y_enemy_t_2),
+    //                                     .y_enemy_b(y_enemy_b_2),
+    //                                     .enemy_on(enemy_on_2),
+    //                                     .rom_enemy(rom_enemy_2),
+    //                                     .bullet_on(bullet_on_2),
+    //                                     .x_bullet(x_bullet_enemy_2),
+    //                                     .y_bullet(y_bullet_enemy_2),
+    //                                     .x_tank(x_tank_reg),
+    //                                     .y_tank(y_tank_reg),
+    //                                     .x_tank_bullet(sq_x_next),
+    //                                     .y_tank_bullet(sq_y_next),
+    //                                     .hit(hit_by_enemy),
+    //                                     .tank_detroyed(tank_detroyed),
+    //                                     .enemy_detroyed(enemy_detroyed)
+    //                                     );
 
 //------------------------------------------------------//
 //                  TANK SETTING                        //
@@ -140,7 +174,7 @@ module pixel_gen(
     // Register Control
     always @(posedge clk_50MHz or negedge reset)// or posedge reset_location)
     begin
-        if(!reset) begin
+        if(!reset/* || reset_location*/) begin
             x_tank_reg <= X_START;
             y_tank_reg <= Y_START;
         end
@@ -158,7 +192,7 @@ module pixel_gen(
         if(refresh_tick) begin
             y_tank_next = y_tank_reg;       // no move
             x_tank_next = x_tank_reg;       // no move
-            if (tank_detroyed) begin
+            if (tank_detroyed/*reset_location*/) begin
                 y_tank_next <= Y_START;
                 x_tank_next <= X_START;
             end
@@ -364,14 +398,14 @@ module pixel_gen(
     // wire [29:0] rom_heart_on;
     // wire [29:0] rom_heart_off;
     // wire [number_of_lives:1] lives;
-    // bit game_over;
+    bit game_over;
 
     // assign lives[1] = (x >= 256) && (x < 272) && (y >= 456) && (y < 472);
     // assign lives[2] = (x >= 288) && (x < 304) && (y >= 456) && (y < 472);
     // assign lives[3] = (x >= 320) && (x < 336) && (y >= 456) && (y < 472);
     // assign lives[4] = (x >= 352) && (x < 368) && (y >= 456) && (y < 472);
     // assign lives[5] = (x >= 384) && (x < 400) && (y >= 456) && (y < 472);
-    // assign game_over = (count==0);
+    assign game_over = (count==0) || (eagle_detroyed === 1);
 
     // heart_on_rom    heart_on_unit   (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_on));
     // heart_off_rom   heart_off_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_off));
@@ -400,9 +434,9 @@ module pixel_gen(
 //------------------------------------------------------//
 //                      GAME OVER                       //
 //------------------------------------------------------//
-    // wire [29:0] over_rgb;
-    // wire over_on;
-    // game_over_display over_display (.clk(clk_50MHz), .x(x), .y(y), .game_over(game_over), .game_over_on(over_on), .game_over_rgb(over_rgb));
+    wire [29:0] over_rgb;
+    wire over_on;
+    game_over_display over_display (.clk(clk_50MHz), .x(x), .y(y), .game_over(game_over), .game_over_on(over_on), .game_over_rgb(over_rgb));
 
 //------------------------------------------------------//
 //                  RGB SETTING OUTPUT                  //
@@ -424,11 +458,11 @@ module pixel_gen(
     // road_rom    road_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_road));
 
     always @* begin
-        if (~video_on) 
+        if ((~video_on))
             rgb = 30'h0;
-        // else if (game_over)
-        //     rgb = over_rgb;
-        else  begin 					
+        else if (game_over) 
+            rgb = over_rgb;
+        else  begin 	
             // eagle
                 if(eagle_on && lower_yellow_on)     
                     if(&rom_eagle == 1)  
