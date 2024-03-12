@@ -273,8 +273,8 @@ module pixel_gen(
                         .refresh_tick(refresh_tick),
                         .x_enemy_bullet(x_bullet_enemy),
                         .y_enemy_bullet(y_bullet_enemy),
-                        // .x_tank_bullet(sq_x_next),
-                        // .y_tank_bullet(sq_y_next),
+                        .x_tank_bullet(sq_x_reg),
+                        .y_tank_bullet(sq_y_reg),
                         .x_eagle(x_eagle),
                         .y_eagle(y_eagle),
                         .rom_eagle(rom_eagle),
@@ -464,7 +464,8 @@ module pixel_gen(
                         rgb = rom_eagle;
 
             // tank
-            else if(tank_on && lower_yellow_on)      
+            else 
+            if(tank_on && lower_yellow_on)      
                 if(|tank_rom == 0)              
                     rgb = rom_road;
                 else

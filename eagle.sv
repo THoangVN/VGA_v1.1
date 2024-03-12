@@ -10,8 +10,8 @@ module eagle (
     input [9:0] y_tank_bullet,
     output reg [9:0] x_eagle,
     output reg [9:0] y_eagle,
-    output wire [29:0] rom_eagle,
-    output wire eagle_on,
+    output reg [29:0] rom_eagle,
+    output reg eagle_on,
     output bit eagle_detroyed
     );
 
@@ -48,19 +48,19 @@ module eagle (
         end
     end
 
-    // assign eagle_detroyed = ((y_enemy_bullet < y_eagle_b) && (y_enemy_bullet + 3 > y_eagle_t) && (x_enemy_bullet < x_eagle_r) && (x_enemy_bullet > x_eagle_l)) ||
-    //                         ((y_tank_bullet  < y_eagle_b) && (y_tank_bullet + 3  > y_eagle_t) && (x_tank_bullet < x_eagle_r)  && (x_tank_bullet > x_eagle_l));
+    assign eagle_detroyed = ((y_enemy_bullet < y_eagle_b) && (y_enemy_bullet + 3 > y_eagle_t) && (x_enemy_bullet < x_eagle_r) && (x_enemy_bullet > x_eagle_l)) ||
+                            ((y_tank_bullet  < y_eagle_b) && (y_tank_bullet + 3  > y_eagle_t) && (x_tank_bullet < x_eagle_r)  && (x_tank_bullet > x_eagle_l));
 
 
     always @(posedge clk_50MHz) begin
         if (refresh_tick) begin
             y_eagle_next = y_eagle;       // no move
             x_eagle_next = x_eagle;       // no move
-            // if (eagle_detroyed)
-            // begin
-            //     x_eagle_next = 0;
-            //     y_eagle_next = 0;
-            // end
+            if (eagle_detroyed)
+            begin
+                x_eagle_next = 0;
+                y_eagle_next = 0;
+            end
         end
     end
 endmodule
