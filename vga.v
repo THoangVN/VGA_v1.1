@@ -33,7 +33,7 @@ module vga(
                         .vsync(VGA_VS),
                         .x(w_x),
                         .y(w_y));
-    
+   
    pixel_gen pg(        .clk_50MHz(CLOCK_50),
                         .reset(SW[1]),
                         .video_on(w_video_on),
@@ -53,8 +53,9 @@ module vga(
    always @(posedge CLOCK_50) 
       if(VGA_CLK)
          rgb_reg <= rgb_next;
-    
+
    assign VGA_BLANK = 0;//hsync & vsync;
    assign VGA_SYNC = 0 ;
-        
+
+
 endmodule
