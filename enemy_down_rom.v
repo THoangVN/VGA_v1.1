@@ -1,5 +1,5 @@
 
-(* romstyle = "M9K" *)  module enemy_down_rom
+(* romstyle = "M4K" *)  module enemy_down_rom
 	(
 		input wire clk,
 		input wire [4:0] row,
@@ -7,7 +7,7 @@
 		output reg [29:0] color_data
 	);
 
-	// (* romstyle = "M9K" *)
+	// (* romstyle = "M4K" *)
 
 	//signal declaration
 	reg [4:0] row_reg;

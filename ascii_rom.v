@@ -22,7 +22,7 @@ module ascii_rom(
 	output reg [7:0] data
 	);
 
-	(* romstyle = "M9K" *)	// Infer BRAM
+	(* romstyle = "M4K" *)	// Infer BRAM
 
 	reg [10:0] addr_reg;
 	

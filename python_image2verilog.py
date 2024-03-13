@@ -66,7 +66,7 @@ def rom_30_bit(name, im, mask=False, rem_x=-1, rem_y=-1):
     f.write("input wire clk,\n\t\tinput wire [" + str(row_width-1) + ":0] row,\n\t\t")
     f.write("input wire [" + str(col_width-1) + ":0] col,\n\t\t")
     f.write("output reg [29:0] color_data\n\t);\n\n\t")
-    f.write("(* romstyle = \"M9K\" *)\n\n\t//signal declaration\n\t")
+    f.write("(* romstyle = \"M4K\" *)\n\n\t//signal declaration\n\t")
     f.write("reg [" + str(row_width-1) + ":0] row_reg;\n\t")
     f.write("reg [" + str(col_width-1) + ":0] col_reg;\n\n\t")
     f.write("always @(posedge clk)\n\t\tbegin\n\t\trow_reg <= row;\n\t\tcol_reg <= col;\n\t\tend\n\n\t")
