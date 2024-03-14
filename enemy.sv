@@ -14,12 +14,13 @@ module enemy #(parameter number_of_brick=100)(
     input [9:0] y_tank_bullet,
     input [9:0] x_tank,
     input [9:0] y_tank,
+    input int enemy_index,
     output reg [9:0] x_enemy_l,
     output reg [9:0] x_enemy_r,
     output reg [9:0] y_enemy_t,
     output reg [9:0] y_enemy_b,
     output wire enemy_on,
-    output wire [29:0] rom_enemy,
+    output reg [29:0] rom_enemy,
     output wire bullet_on,
     output reg [9:0] x_bullet,
     output reg [9:0] y_bullet,
@@ -27,6 +28,8 @@ module enemy #(parameter number_of_brick=100)(
     );
     localparam X_START_ENEMY = 32;
     localparam Y_START_ENEMY = 32;
+    localparam X_START_ENEMY_1 = 192;
+    localparam Y_START_ENEMY_1 = 32;
     localparam enemy_speed = 1;
     localparam X_LEFT = 32;                 
     localparam X_RIGHT = 608;               
@@ -37,13 +40,12 @@ module enemy #(parameter number_of_brick=100)(
     
     wire reset_bullet;
     wire clk_50Hz;
-    wire up, down, left, right, hold_boom;
+    wire up, down, left, right;
     wire [29:0] rom_enemy_up;
     wire [29:0] rom_enemy_down;
     wire [29:0] rom_enemy_left;
     wire [29:0] rom_enemy_right;
     wire [29:0] boom_rom_data;
-    // wire [29:0] rom_eagle_1;
     reg  [9:0] x_enemy_register;
     reg  [9:0] y_enemy_register;
     reg  [9:0] x_enemy_next;
@@ -58,32 +60,26 @@ module enemy #(parameter number_of_brick=100)(
     assign row_enemy = y - y_enemy_t;
     assign rom_enemy = (hold_enemy_detroyed != 0) ? boom_rom_data : up ? rom_enemy_up : down ? rom_enemy_down : left ? rom_enemy_left : rom_enemy_right;
     assign reset_bullet = reset && (!reset_location);
-
+    
     enemy_up_rom    enemy_up_unit       (.clk(clk_50MHz), .row(row_enemy), .col(col_enemy), .color_data(rom_enemy_up));
     enemy_down_rom  enemy_down_unit     (.clk(clk_50MHz), .row(row_enemy), .col(col_enemy), .color_data(rom_enemy_down));
     enemy_left_rom  enemy_left_unit     (.clk(clk_50MHz), .row(row_enemy), .col(col_enemy), .color_data(rom_enemy_left));
     enemy_right_rom enemy_right_unit    (.clk(clk_50MHz), .row(row_enemy), .col(col_enemy), .color_data(rom_enemy_right));
     boom_rom        enemy_boom          (.clk(clk_50MHz), .row(row_enemy), .col(col_enemy), .color_data(boom_rom_data));
-    // eagle_rom   eagle_rom_unit   (.clk(clk_50MHz), .row(row_enemy), .col(col_enemy), .color_data(rom_eagle_1));
-
-    // always @* begin
-        
-    //     if (!reset || reset_location) begin
-    //         // Initialization logic
-    //         x_enemy_register <= X_START_ENEMY;
-    //         y_enemy_register <= Y_START_ENEMY;
-    //     end
-    //     else begin
-    //         x_enemy_register <= x_enemy_next;
-    //         y_enemy_register <= y_enemy_next;
-    //     end
-    // end
 
     always @(posedge clk_50MHz or negedge reset or posedge reset_location) begin
         if (!reset || reset_location) begin
             // Initialization logic
-            x_enemy_register <= X_START_ENEMY;
-            y_enemy_register <= Y_START_ENEMY;
+            case (enemy_index)
+                1: begin
+                    x_enemy_register <= X_START_ENEMY;
+                    y_enemy_register <= Y_START_ENEMY;
+                end
+                2: begin
+                    x_enemy_register <= X_START_ENEMY_1;
+                    y_enemy_register <= Y_START_ENEMY_1;
+                end
+            endcase
         end
         else begin
             x_enemy_register <= x_enemy_next;
@@ -107,8 +103,8 @@ module enemy #(parameter number_of_brick=100)(
                             .x_bullet_l(x_bullet), 
                             .y_bullet_t(y_bullet), 
                             .bullet_on(bullet_on));
-    clk_divider  clk_dev   (.clk_50MHz(clk_50MHz), .clk_50Hz(clk_50Hz));
-    random_move  rand_move (.clk(clk_50Hz), .rst(reset), .up(up), .down(down), .left(left), .right(right), .enemy_detroyed(hold_enemy_detroyed), .boom(hold_boom));
+    clk_divider  clk_div   (.clk_50MHz(clk_50MHz), .clk_50Hz(clk_50Hz));
+    random_move  rand_move (.clk(clk_50Hz), .rst(reset), .up(up), .down(down), .left(left), .right(right), .enemy_detroyed(hold_enemy_detroyed), .enemy_index(enemy_index));
 
     assign enemy_detroyed       = ((y_tank_bullet < y_enemy_b) && ((y_tank_bullet+3) > y_enemy_t) && (x_tank_bullet < x_enemy_r) && ((x_tank_bullet+3) > x_enemy_l));
     assign stop_up_by_tank      = ((y_tank + 32) == y_enemy_t) && (x_tank <= x_enemy_r) && ((x_tank + 32) >= x_enemy_l);
@@ -177,7 +173,7 @@ module random_move (
     input wire rst,
     // input wire change,
     input int enemy_detroyed,
-    output reg boom,
+    input int enemy_index,
     output reg up,
     output reg down,
     output reg left,
@@ -197,14 +193,23 @@ module random_move (
     reg [7:0] lfsr_state;
 
     assign {up, down, left, right} =  (enemy_detroyed != 0) ? 4'b0 : (direction==2'b00) ? 4'b1000 : (direction==2'b01) ? 4'b0100 : (direction==2'b10) ? 4'b0010 : 4'b0001;
-    assign boom = (state==BOOM);
 
     
     always @(posedge clk or negedge rst/*or posedge change*/) begin
         if (!rst) begin
-            state = MOVE_RIGHT;
-            lfsr_state = 8'b1;  // Initial state != 0
-            direction = 2'b11;
+            case (enemy_index)
+                1: begin
+                    state = MOVE_RIGHT;
+                    direction = 2'b11;
+                    lfsr_state = 8'b1;//(enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
+                end
+                2: begin
+                    state = MOVE_DOWN;
+                    direction = 2'b01;
+                    lfsr_state = 8'b10;//(enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
+                end
+            endcase
+            
         end
         else begin
             // Update LFSR
