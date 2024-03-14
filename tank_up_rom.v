@@ -6,7 +6,7 @@ module tank_up_rom
 		output reg [29:0] color_data
 	);
 
-	(* romstyle = "M9K" *)
+	(* romstyle = "M4K" *)
 
 	//signal declaration
 	reg [4:0] row_reg;
