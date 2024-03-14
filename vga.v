@@ -19,7 +19,7 @@ module vga(
    );
 
    wire [9:0] w_x, w_y;
-   wire w_p_tick, w_video_on; //w_reset;
+   wire w_p_tick, w_video_on;
    reg [29:0] rgb_reg;
    wire [29:0] rgb_next;
    wire up, down, right, left;
@@ -28,7 +28,7 @@ module vga(
    vga_controller vga( .clk_50MHz(CLOCK_50),
                         .reset(SW[1]),
                         .video_on(w_video_on),
-                        .p_tick(VGA_CLK),//w_p_tick),
+                        .p_tick(VGA_CLK),
                         .hsync(VGA_HS),
                         .vsync(VGA_VS),
                         .x(w_x),
@@ -54,8 +54,7 @@ module vga(
       if(VGA_CLK)
          rgb_reg <= rgb_next;
 
-   assign VGA_BLANK = 1;//SW[2];//hsync & vsync;
-   assign VGA_SYNC = 1;//SW[3] ;
-
+   assign VGA_BLANK = 1;
+   assign VGA_SYNC = 1;
 
 endmodule
