@@ -16,7 +16,7 @@ module eagle (
     );
 
     localparam X_START = 320;
-    localparam Y_START = 240;
+    localparam Y_START = 416;
     wire [4:0] col_eagle;
     wire [4:0] row_eagle;
     reg [9:0] x_eagle_l ;

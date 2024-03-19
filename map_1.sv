@@ -49,10 +49,76 @@ module map_1 #(parameter number_of_brick = 100)(
     
     always @(posedge clk_50MHz or negedge reset) begin
         if (!reset) begin
+            // 20 Bricks Cover Eagle
+                //    **
+                //   ****
+                //  ******
+                //  **  **
+                //  **  **
+                // Column 1
+                    x_brick_register[0] = 288;
+                    y_brick_register[0] = 432;
+
+                    x_brick_register[1] = 288;
+                    y_brick_register[1] = 416;
+
+                    x_brick_register[2] = 288;
+                    y_brick_register[2] = 400;
+                // Column 2
+                    x_brick_register[3] = 304;
+                    y_brick_register[3] = 432;
+
+                    x_brick_register[4] = 304;
+                    y_brick_register[4] = 416;
+
+                    x_brick_register[5] = 304;
+                    y_brick_register[5] = 400;
+
+                    x_brick_register[6] = 304;
+                    y_brick_register[6] = 384;
+                // Column 3
+                    x_brick_register[7] = 320;
+                    y_brick_register[7] = 400;
+
+                    x_brick_register[8] = 320;
+                    y_brick_register[8] = 384;
+
+                    x_brick_register[9] = 320;
+                    y_brick_register[9] = 368;
+                // Column 4
+                    x_brick_register[10] = 336;
+                    y_brick_register[10] = 400;
+
+                    x_brick_register[11] = 336;
+                    y_brick_register[11] = 384;
+
+                    x_brick_register[12] = 336;
+                    y_brick_register[12] = 368;
+                // Column 5
+                    x_brick_register[13] = 352;
+                    y_brick_register[13] = 432;
+
+                    x_brick_register[14] = 352;
+                    y_brick_register[14] = 416;
+
+                    x_brick_register[15] = 352;
+                    y_brick_register[15] = 400;
+
+                    x_brick_register[16] = 352;
+                    y_brick_register[16] = 384;
+                // Column 6
+                    x_brick_register[17] = 368;
+                    y_brick_register[17] = 432;
+
+                    x_brick_register[18] = 368;
+                    y_brick_register[18] = 416;
+
+                    x_brick_register[19] = 368;
+                    y_brick_register[19] = 400;
             // Build map
-            x_brick_register[0] = 32;
-            y_brick_register[0] = 96;
-            for (int i = 1; i < number_of_brick; i++) begin
+            x_brick_register[20] = 32;
+            y_brick_register[20] = 96;
+            for (int i = 21; i < number_of_brick; i++) begin
                 bit odd_or_even;
                 x_brick_register[i] = x_brick_register[i-1] + 16;
                 if (x_brick_register[i] > 527)
