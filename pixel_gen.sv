@@ -27,41 +27,41 @@ module pixel_gen(
     wire wall_on;
     wire [29:0] brick_rom;
     wire [29:0] wall_rom;
-    // map_1 #(number_of_brick) map_1_unit (   .clk_50MHz(clk_50MHz),
-    //                                         .reset(reset),
-    //                                         .x(x),
-    //                                         .y(y),
-    //                                         .brick_on(brick_on),
-    //                                         .wall_on(wall_on),
-    //                                         .refresh_tick(refresh_tick),
-    //                                         .brick_rom_data(brick_rom),
-    //                                         .wall_rom_data(wall_rom),
-    //                                         .x_tank_r(x_tank_r),
-    //                                         .x_tank_l(x_tank_l),
-    //                                         .y_tank_t(y_tank_t),
-    //                                         .y_tank_b(y_tank_b),
-    //                                         .x_enemy_r(x_enemy_r),
-    //                                         .x_enemy_l(x_enemy_l),
-    //                                         .y_enemy_t(y_enemy_t),
-    //                                         .y_enemy_b(y_enemy_b),
-    //                                         .x_bullet_r(sq_x_reg+3),
-    //                                         .x_bullet_l(sq_x_reg),
-    //                                         .y_bullet_t(sq_y_reg),
-    //                                         .y_bullet_b(sq_y_reg+3),
-    //                                         .hit(hit),
-    //                                         .hit_by_enemy(hit_by_enemy),
-    //                                         .bullet_size(SQUARE_SIZE),
-    //                                         .stop_go_up(stop_up),
-    //                                         .stop_go_down(stop_down),
-    //                                         .stop_go_left(stop_left),
-    //                                         .stop_go_right(stop_right),
-    //                                         .stop_enemy_go_up(stop_enemy_up),
-    //                                         .stop_enemy_go_down(stop_enemy_down),
-    //                                         .stop_enemy_go_left(stop_enemy_left),
-    //                                         .stop_enemy_go_right(stop_enemy_right),
-    //                                         .x_bullet_enemy(x_bullet_enemy),
-    //                                         .y_bullet_enemy(y_bullet_enemy)
-    //                                         );
+    map_1 #(number_of_brick) map_1_unit (   .clk_50MHz(clk_50MHz),
+                                            .reset(reset),
+                                            .x(x),
+                                            .y(y),
+                                            .brick_on(brick_on),
+                                            .wall_on(wall_on),
+                                            .refresh_tick(refresh_tick),
+                                            .brick_rom_data(brick_rom),
+                                            .wall_rom_data(wall_rom),
+                                            .x_tank_r(x_tank_r),
+                                            .x_tank_l(x_tank_l),
+                                            .y_tank_t(y_tank_t),
+                                            .y_tank_b(y_tank_b),
+                                            .x_enemy_r(x_enemy_r),
+                                            .x_enemy_l(x_enemy_l),
+                                            .y_enemy_t(y_enemy_t),
+                                            .y_enemy_b(y_enemy_b),
+                                            .x_bullet_r(sq_x_reg+3),
+                                            .x_bullet_l(sq_x_reg),
+                                            .y_bullet_t(sq_y_reg),
+                                            .y_bullet_b(sq_y_reg+3),
+                                            .hit(hit),
+                                            .hit_by_enemy(hit_by_enemy),
+                                            .bullet_size(SQUARE_SIZE),
+                                            .stop_go_up(stop_up),
+                                            .stop_go_down(stop_down),
+                                            .stop_go_left(stop_left),
+                                            .stop_go_right(stop_right),
+                                            .stop_enemy_go_up(stop_enemy_up),
+                                            .stop_enemy_go_down(stop_enemy_down),
+                                            .stop_enemy_go_left(stop_enemy_left),
+                                            .stop_enemy_go_right(stop_enemy_right),
+                                            .x_bullet_enemy(x_bullet_enemy),
+                                            .y_bullet_enemy(y_bullet_enemy)
+                                            );
 
 //------------------------------------------------------//
 //                   ENEMY SETTING                      //
@@ -157,7 +157,7 @@ module pixel_gen(
     reg [9:0] y_tank_reg = Y_START;         // tank starting position X
     reg [9:0] x_tank_reg = X_START;         // tank starting position Y
     reg [9:0] y_tank_next, x_tank_next;     // signals for register buffer 
-    localparam tank_VELOCITY = 2;            // tank velocity 
+    localparam tank_VELOCITY = 1;            // tank velocity 
     bit tank_detroyed;
     byte count;
     bit stop_up_by_enemy, stop_down_by_enemy, stop_left_by_enemy, stop_right_by_enemy;
@@ -185,13 +185,13 @@ module pixel_gen(
     end
         
     // tank Control
-    always @(posedge clk_50MHz) begin
-        // y_tank_next = y_tank_reg;       // no move
-        // x_tank_next = x_tank_reg;       // no move
+    always @* begin
+        y_tank_next = y_tank_reg;       // no move
+        x_tank_next = x_tank_reg;       // no move
 
         if(refresh_tick) begin
-            y_tank_next = y_tank_reg;       // no move
-            x_tank_next = x_tank_reg;       // no move
+            // y_tank_next = y_tank_reg;       // no move
+            // x_tank_next = x_tank_reg;       // no move
             if (tank_detroyed/*reset_location*/) begin
                 y_tank_next <= Y_START;
                 x_tank_next <= X_START;
@@ -269,16 +269,19 @@ module pixel_gen(
     wire [29:0] rom_data1, rom_data2, rom_data3, rom_data4, rom_data5;
     reg [1:0] tank_select;
     bit [1:0] bullet_select ;
+    reg end_of_lives;
 
     always @(posedge clk_50MHz or negedge reset)
     begin
         if(!reset) begin
             tank_select = 2'b00;
             count = number_of_lives;
+            end_of_lives = 0;
         end
         else if(refresh_tick)
         begin
             if (tank_detroyed) count--;
+            if (count == 0) end_of_lives = 1;
             if(up)
                 tank_select = 2'b00;
             else if(down)
@@ -395,41 +398,41 @@ module pixel_gen(
 //------------------------------------------------------//
 //                   TANK LIVES                         //
 //------------------------------------------------------//
-    // wire [29:0] rom_heart_on;
-    // wire [29:0] rom_heart_off;
-    // wire [number_of_lives:1] lives;
+    wire [29:0] rom_heart_on;
+    wire [29:0] rom_heart_off;
+    wire [number_of_lives:1] lives;
     bit game_over;
 
-    // assign lives[1] = (x >= 256) && (x < 272) && (y >= 456) && (y < 472);
-    // assign lives[2] = (x >= 288) && (x < 304) && (y >= 456) && (y < 472);
-    // assign lives[3] = (x >= 320) && (x < 336) && (y >= 456) && (y < 472);
-    // assign lives[4] = (x >= 352) && (x < 368) && (y >= 456) && (y < 472);
-    // assign lives[5] = (x >= 384) && (x < 400) && (y >= 456) && (y < 472);
-    assign game_over = (count==0) || (eagle_detroyed === 1);
+    assign lives[1] = (x >= 256) && (x < 272) && (y >= 456) && (y < 472);
+    assign lives[2] = (x >= 288) && (x < 304) && (y >= 456) && (y < 472);
+    assign lives[3] = (x >= 320) && (x < 336) && (y >= 456) && (y < 472);
+    assign lives[4] = (x >= 352) && (x < 368) && (y >= 456) && (y < 472);
+    assign lives[5] = (x >= 384) && (x < 400) && (y >= 456) && (y < 472);
+    assign game_over = (end_of_lives === 1) || (eagle_detroyed === 1);
 
-    // heart_on_rom    heart_on_unit   (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_on));
-    // heart_off_rom   heart_off_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_off));
+    heart_on_rom    heart_on_unit   (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_on));
+    heart_off_rom   heart_off_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_off));
 
 //------------------------------------------------------//
 //                   SCORE BOARD                        //
 //------------------------------------------------------//
-    // wire [3:0] dig0, dig1;
-    // wire [29:0] text_rgb;
-    // wire text_on;
-    // m100_counter counter_unit  (.clk(clk_50MHz),
-    //                             .reset(reset),
-    //                             .d_inc(enemy_detroyed),  
-    //                             // .d_clr(d_clr),
-    //                             .dig0(dig0),
-    //                             .dig1(dig1));
+    wire [3:0] dig0, dig1;
+    wire [29:0] text_rgb;
+    wire text_on;
+    m100_counter counter_unit  (.clk(clk_50MHz),
+                                .reset(reset),
+                                .d_inc(enemy_detroyed),  
+                                // .d_clr(d_clr),
+                                .dig0(dig0),
+                                .dig1(dig1));
 
-    // text text_unit (.clk(clk_50MHz),
-    //                 .x(x),
-    //                 .y(y),
-    //                 .dig0(dig0),
-    //                 .dig1(dig1),       
-    //                 .text_on(text_on),
-    //                 .text_rgb(text_rgb));
+    text text_unit (.clk(clk_50MHz),
+                    .x(x),
+                    .y(y),
+                    .dig0(dig0),
+                    .dig1(dig1),       
+                    .text_on(text_on),
+                    .text_rgb(text_rgb));
 
 //------------------------------------------------------//
 //                      GAME OVER                       //
@@ -443,9 +446,9 @@ module pixel_gen(
 //------------------------------------------------------//
     // Pixel Location Status Signals
     wire upper_yellow_on, lower_yellow_on, street_on, water_on, street_2_on;
-    wire [29:0] rom_sand = YELLOW;
-    wire [29:0] rom_water = BLUE;
-    wire [29:0] rom_road = BLACK;
+    wire [29:0] rom_sand    ;//= YELLOW;
+    wire [29:0] rom_water   ;//= BLUE;
+    wire [29:0] rom_road    ;//= BLACK;
     // Drivers for Status Signals
     assign upper_yellow_on  = ((x >= 32) && (x < 608) && (y >= 228) && (y < 260));
     assign lower_yellow_on  = ((x >= 32) && (x < 608) && (y >= 420) && (y < 452));
@@ -453,9 +456,9 @@ module pixel_gen(
     assign street_2_on      = ((x >= 32) && (x < 608) && (y >= 31) && (y < 68));
     assign water_on         = ((x >= 32) && (x < 608) && (y >= 68) && (y < 228));
 
-    // sand_rom    sand_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_sand));
-    // water_rom   water_unit (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_water));
-    // road_rom    road_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_road));
+    sand_rom    sand_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_sand));
+    water_rom   water_unit (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_water));
+    road_rom    road_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_road));
 
     always @* begin
         if ((~video_on))
@@ -571,60 +574,60 @@ module pixel_gen(
             else if (bullet_on)
                 rgb = RED;
 
-            // else if(text_on)
-            //     if(|text_rgb==0)
-            //         rgb = RED;
-            //     else rgb = text_rgb;	
+            else if(text_on)
+                if(|text_rgb==0)
+                    rgb = RED;
+                else rgb = text_rgb;	
 
-            // else if (lives[1])
-            //     if (count >= 1)
-            //         if (&rom_heart_on == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_on;
-            //     else 
-            //         if (&rom_heart_off == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_off;
+            else if (lives[1])
+                if (count >= 1)
+                    if (&rom_heart_on == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_on;
+                else 
+                    if (&rom_heart_off == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_off;
 
-            // else if (lives[2])
-            //     if (count >= 2)
-            //         if (&rom_heart_on == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_on;
-            //     else 
-            //         if (&rom_heart_off == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_off;
+            else if (lives[2])
+                if (count >= 2)
+                    if (&rom_heart_on == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_on;
+                else 
+                    if (&rom_heart_off == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_off;
 
-            // else if (lives[3])
-            //     if (count >= 3)
-            //         if (&rom_heart_on == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_on;
-            //     else 
-            //         if (&rom_heart_off == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_off;
+            else if (lives[3])
+                if (count >= 3)
+                    if (&rom_heart_on == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_on;
+                else 
+                    if (&rom_heart_off == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_off;
 
-            // else if (lives[4])
-            //     if (count >= 4)
-            //         if (&rom_heart_on == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_on;
-            //     else 
-            //         if (&rom_heart_off == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_off;
+            else if (lives[4])
+                if (count >= 4)
+                    if (&rom_heart_on == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_on;
+                else 
+                    if (&rom_heart_off == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_off;
 
-            // else if (lives[5])
-            //     if (count == 5)
-            //         if (&rom_heart_on == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_on;
-            //     else 
-            //         if (&rom_heart_off == 1)
-            //             rgb = wall_rom;
-            //         else rgb = rom_heart_off;
+            else if (lives[5])
+                if (count == 5)
+                    if (&rom_heart_on == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_on;
+                else 
+                    if (&rom_heart_off == 1)
+                        rgb = wall_rom;
+                    else rgb = rom_heart_off;
 
             else if(wall_on)
                 rgb = wall_rom;					   

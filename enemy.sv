@@ -70,16 +70,16 @@ module enemy #(parameter number_of_brick=100)(
     always @(posedge clk_50MHz or negedge reset or posedge reset_location) begin
         if (!reset || reset_location) begin
             // Initialization logic
-            case (enemy_index)
-                1: begin
+            // case (enemy_index)
+            //     1: begin
                     x_enemy_register <= X_START_ENEMY;
                     y_enemy_register <= Y_START_ENEMY;
-                end
-                2: begin
-                    x_enemy_register <= X_START_ENEMY_1;
-                    y_enemy_register <= Y_START_ENEMY_1;
-                end
-            endcase
+            //     end
+            //     2: begin
+            //         x_enemy_register <= X_START_ENEMY_1;
+            //         y_enemy_register <= Y_START_ENEMY_1;
+            //     end
+            // endcase
         end
         else begin
             x_enemy_register <= x_enemy_next;
@@ -112,11 +112,11 @@ module enemy #(parameter number_of_brick=100)(
     assign stop_left_by_tank    = ((x_tank + 32) == x_enemy_l) && (y_tank <= y_enemy_b) && ((y_tank + 32) >= y_enemy_t);
     assign stop_right_by_tank   = (x_tank == x_enemy_r)        && (y_tank <= y_enemy_b) && ((y_tank + 32) >= y_enemy_t);
 
-    always @(posedge clk_50MHz) begin : update_next_enemy_location
+    always @* begin : update_next_enemy_location
+        y_enemy_next = y_enemy_register;       // no move
+        x_enemy_next = x_enemy_register;       // no move
         if(refresh_tick) 
         begin
-            y_enemy_next = y_enemy_register;       // no move
-            x_enemy_next = x_enemy_register;       // no move
             if (reset_location) begin
                 y_enemy_next <= Y_START_ENEMY;
                 x_enemy_next <= X_START_ENEMY;
