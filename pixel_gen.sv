@@ -269,20 +269,17 @@ module pixel_gen(
     wire [29:0] rom_data1, rom_data2, rom_data3, rom_data4, rom_data5;
     reg [1:0] tank_select;
     bit [1:0] bullet_select ;
-    reg end_of_lives;
 
     always @(posedge clk_50MHz or negedge reset)
     begin
         if(!reset) begin
             tank_select = 2'b00;
             count = number_of_lives;
-            end_of_lives = 0;
         end
         else if(refresh_tick)
         begin
-            if (tank_detroyed) count--;
-            if (count == 0) end_of_lives = 1;
-            if(up)
+            if (tank_detroyed & count !=0) count--;
+            else if(up)
                 tank_select = 2'b00;
             else if(down)
                 tank_select = 2'b01;
@@ -408,7 +405,7 @@ module pixel_gen(
     assign lives[3] = (x >= 320) && (x < 336) && (y >= 456) && (y < 472);
     assign lives[4] = (x >= 352) && (x < 368) && (y >= 456) && (y < 472);
     assign lives[5] = (x >= 384) && (x < 400) && (y >= 456) && (y < 472);
-    assign game_over = (end_of_lives === 1) || (eagle_detroyed === 1);
+    assign game_over = (count === 0) || (eagle_detroyed === 1);
 
     heart_on_rom    heart_on_unit   (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_on));
     heart_off_rom   heart_off_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_heart_off));
@@ -422,7 +419,7 @@ module pixel_gen(
     m100_counter counter_unit  (.clk(clk_50MHz),
                                 .reset(reset),
                                 .d_inc(enemy_detroyed),  
-                                // .d_clr(d_clr),
+                                .d_clr(reset),
                                 .dig0(dig0),
                                 .dig1(dig1));
 
