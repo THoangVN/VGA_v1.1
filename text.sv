@@ -1,6 +1,6 @@
 module text(
     input clk,
-    input [3:0] dig0, dig1,
+    input [3:0] dig0, dig1,dig,
     input [9:0] x, y,
     output text_on,
     output reg [29:0] text_rgb
@@ -24,7 +24,7 @@ module text(
     // - scale to 16 by 32 text size
     // - line 1, 16 chars: "Score: dd Ball: d"
     // ---------------------------------------------------------------------------
-    assign score_on = (y <= 479) && (y >= 448) && (x < 128);
+    assign score_on = (y <= 479) && (y >= 448) && (x < 128 + 32);
     //assign score_on = (y[9:5] == 0) && (x[9:4] < 16);
     assign row_addr_s = y[4:1];
     assign bit_addr_s = x[3:1];
@@ -39,7 +39,7 @@ module text(
         4'h5 : char_addr_s = 7'h3A;     // :
         4'h6 : char_addr_s = {3'b011, dig1};    // tens digit
         4'h7 : char_addr_s = {3'b011, dig0};    // ones digit
-        4'h8 : char_addr_s = 7'h00;     //
+        4'h8 : char_addr_s = {3'b011, dig} ;    //
         4'h9 : char_addr_s = 7'h00;     //
         4'hA : char_addr_s = 7'h00;     // B
         4'hB : char_addr_s = 7'h00;     // A

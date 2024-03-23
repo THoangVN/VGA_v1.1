@@ -82,6 +82,7 @@ module pixel_gen(
     // wire [9:0] x_bullet_enemy_2;
     // wire [9:0] y_bullet_enemy_2;
     wire enemy_detroyed;
+    wire reset_loc;
     enemy #(number_of_brick) enemy1 (   .clk_50MHz(clk_50MHz),
                                         .reset(reset),                        
                                         .x(x),                     
@@ -106,6 +107,7 @@ module pixel_gen(
                                         .y_tank_bullet(sq_y_next),
                                         .hit(hit_by_enemy),
                                         .tank_detroyed(tank_detroyed),
+                                        .reset_loc(reset_loc),
                                         .enemy_detroyed(enemy_detroyed)
                                         );
     // enemy #(number_of_brick) enemy2 (   .clk_50MHz(clk_50MHz),
@@ -162,21 +164,44 @@ module pixel_gen(
     byte count;
     bit stop_up_by_enemy, stop_down_by_enemy, stop_left_by_enemy, stop_right_by_enemy;
     int hold_tank_detroyed;
-    // bit reset_location;
+    bit reset_location;
     bit reset_bullet;
 
-    assign reset_bullet = reset;
+    assign reset_bullet = reset ;
     assign tank_detroyed = ((y_bullet_enemy < y_tank_b) && ((y_bullet_enemy+3) > y_tank_t) && (x_bullet_enemy < x_tank_r) && ((x_bullet_enemy+3) > x_tank_l));
     assign stop_up_by_enemy    = (y_tank_t == y_enemy_b) && (x_tank_l <= x_enemy_r) && (x_tank_r >= x_enemy_l);
     assign stop_down_by_enemy  = (y_tank_b == y_enemy_t) && (x_tank_l <= x_enemy_r) && (x_tank_r >= x_enemy_l);
     assign stop_left_by_enemy  = (x_tank_l == x_enemy_r) && (y_tank_t <= y_enemy_b) && (y_tank_b >= y_enemy_t);
     assign stop_right_by_enemy = (x_tank_r == x_enemy_l) && (y_tank_t <= y_enemy_b) && (y_tank_b >= y_enemy_t);
     // Register Control
-    always @(posedge clk_50MHz or negedge reset)// or posedge reset_location)
+    always @(posedge clk_50MHz or negedge reset or posedge reset_location)
     begin
-        if(!reset/* || reset_location*/) begin
-            x_tank_reg <= X_START;
-            y_tank_reg <= Y_START;
+        if(!reset || reset_location) begin
+            if(count ==number_of_lives*2)
+            begin
+                x_tank_reg <= X_START;
+                y_tank_reg <= Y_START;
+            end
+            else if (count == 8)
+            begin
+                x_tank_reg <= X_START + 32;
+                y_tank_reg <= Y_START;
+            end
+            else if (count == 6)
+            begin
+                x_tank_reg <= X_START + 32;
+                y_tank_reg <= Y_START - 32;
+            end
+            else if (count == 4)
+            begin
+                x_tank_reg <= X_START + 64;
+                y_tank_reg <= Y_START - 64;
+            end
+            else 
+            begin
+                x_tank_reg <= X_START +32;
+                y_tank_reg <= Y_START - 64;
+            end
         end
         else begin 
             x_tank_reg <= x_tank_next;
@@ -192,11 +217,12 @@ module pixel_gen(
         if(refresh_tick) begin
             // y_tank_next = y_tank_reg;       // no move
             // x_tank_next = x_tank_reg;       // no move
-            if (tank_detroyed/*reset_location*/) begin
-                y_tank_next <= Y_START;
-                x_tank_next <= X_START;
-            end
-            else begin
+            // if ( reset_location) begin
+            //     y_tank_next <= Y_START;
+            //     x_tank_next <= X_START;
+            // end
+            // else 
+            begin
                 if(up & (y_tank_t > tank_VELOCITY) & (y_tank_t > (Y_TOP + tank_VELOCITY)&& (|stop_up)==0) && !stop_up_by_enemy)
                     y_tank_next = y_tank_reg - tank_VELOCITY;  // move up
                 else if(down & (y_tank_b < (Y_MAX - tank_VELOCITY)) & (y_tank_b < (Y_BOTTOM - tank_VELOCITY) && (|stop_down)==0) && !stop_down_by_enemy)
@@ -209,25 +235,25 @@ module pixel_gen(
         end
     end     
     
-    // always @(posedge clk_50MHz or negedge reset) begin : hold_state_boom
-    //     if (!reset) begin
-    //         hold_tank_detroyed = 0;
-    //     end
-    //     else if (refresh_tick)
-    //     begin
-    //         if (hold_tank_detroyed == 8)
-    //         begin
-    //             hold_tank_detroyed = 0;
-    //             reset_location = 1;
-    //         end
-    //         else 
-    //         begin
-    //             reset_location = 0;
-    //             if (((hold_tank_detroyed == 0) && tank_detroyed) || (hold_tank_detroyed != 0)) 
-    //                 hold_tank_detroyed ++;
-    //         end
-    //     end
-    // end
+    always @(posedge clk_50MHz or negedge reset) begin : hold_state_boom
+        if (!reset) begin
+            hold_tank_detroyed = 0;
+        end
+        else if (refresh_tick)
+        begin
+            if (hold_tank_detroyed == 10)
+            begin
+                hold_tank_detroyed = 0;
+                reset_location = 1;
+            end
+            else 
+            begin
+                reset_location = 0;
+                if (((hold_tank_detroyed == 0) && tank_detroyed) || (hold_tank_detroyed != 0)) 
+                    hold_tank_detroyed ++;
+            end
+        end
+    end
 
     // row and column wires for each rom
     wire [4:0] row, col;      // tank up
@@ -242,7 +268,7 @@ module pixel_gen(
     tank_down_rom   rom2(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data2));
     tank_left_rom   rom3(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data3));
     tank_right_rom  rom4(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data4));
-    // boom_rom        tank_boom(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data5));
+    boom_rom        tank_boom(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data5));
     
     // **** ROM BOUNDARIES / STATUS SIGNALS ****
     // tank rom data square boundaries
@@ -274,7 +300,7 @@ module pixel_gen(
     begin
         if(!reset) begin
             tank_select = 2'b00;
-            count = number_of_lives;
+            count = number_of_lives*2;
         end
         else if(refresh_tick)
         begin
@@ -413,21 +439,24 @@ module pixel_gen(
 //------------------------------------------------------//
 //                   SCORE BOARD                        //
 //------------------------------------------------------//
-    wire [3:0] dig0, dig1;
+    wire [3:0] dig0, dig1,dig;
     wire [29:0] text_rgb;
     wire text_on;
     m100_counter counter_unit  (.clk(clk_50MHz),
                                 .reset(reset),
-                                .d_inc(enemy_detroyed),  
-                                .d_clr(reset),
+                                .d_inc(reset_loc),  
+                                // .d_clr(reset),
                                 .dig0(dig0),
-                                .dig1(dig1));
+                                .dig1(dig1),
+                                .dig(dig)
+                                );
 
     text text_unit (.clk(clk_50MHz),
                     .x(x),
                     .y(y),
                     .dig0(dig0),
                     .dig1(dig1),       
+                    .dig(dig),
                     .text_on(text_on),
                     .text_rgb(text_rgb));
 
@@ -577,7 +606,7 @@ module pixel_gen(
                 else rgb = text_rgb;	
 
             else if (lives[1])
-                if (count >= 1)
+                if (count >= 1*2)
                     if (&rom_heart_on == 1)
                         rgb = wall_rom;
                     else rgb = rom_heart_on;
@@ -587,7 +616,7 @@ module pixel_gen(
                     else rgb = rom_heart_off;
 
             else if (lives[2])
-                if (count >= 2)
+                if (count >= 2*2)
                     if (&rom_heart_on == 1)
                         rgb = wall_rom;
                     else rgb = rom_heart_on;
@@ -597,7 +626,7 @@ module pixel_gen(
                     else rgb = rom_heart_off;
 
             else if (lives[3])
-                if (count >= 3)
+                if (count >= 3*2)
                     if (&rom_heart_on == 1)
                         rgb = wall_rom;
                     else rgb = rom_heart_on;
@@ -607,7 +636,7 @@ module pixel_gen(
                     else rgb = rom_heart_off;
 
             else if (lives[4])
-                if (count >= 4)
+                if (count >= 4*2)
                     if (&rom_heart_on == 1)
                         rgb = wall_rom;
                     else rgb = rom_heart_on;
@@ -617,7 +646,7 @@ module pixel_gen(
                     else rgb = rom_heart_off;
 
             else if (lives[5])
-                if (count == 5)
+                if (count == 5*2)
                     if (&rom_heart_on == 1)
                         rgb = wall_rom;
                     else rgb = rom_heart_on;

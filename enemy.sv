@@ -24,6 +24,7 @@ module enemy #(parameter number_of_brick=100)(
     output wire bullet_on,
     output reg [9:0] x_bullet,
     output reg [9:0] y_bullet,
+    output bit reset_loc,
     output bit enemy_detroyed
     );
     localparam X_START_ENEMY = 32;
@@ -166,6 +167,7 @@ module enemy #(parameter number_of_brick=100)(
     assign x_enemy_r = x_enemy_register + 31;
     assign y_enemy_b = y_enemy_register + 31;
     assign enemy_on = (x >= x_enemy_l) && (x <= x_enemy_r) && (y >= y_enemy_t) && (y <= y_enemy_b);
+    assign reset_loc = reset_location;
 endmodule : enemy
 
 module random_move (
@@ -306,7 +308,7 @@ module enemy_bullet(
         end
     end
 
-    always @(posedge clk_50MHz or negedge reset) begin
+    always @(posedge clk_50MHz or negedge reset ) begin
         if (!reset) begin
             state = IDLE;
             y_bullet_next = y_bullet_reg;       
@@ -316,10 +318,10 @@ module enemy_bullet(
             if (refresh_tick)
             case (state)
                 IDLE: begin
-                    state = SHOTING;
                     {up,down,left,right} = {enemy_up,enemy_down,enemy_left,enemy_right};
                     x_bullet_next = x_enemy + 14;
                     y_bullet_next = y_enemy + 14;
+                    state = SHOTING;
                 end
                 SHOTING: begin
                     case ({up,down,left,right})
