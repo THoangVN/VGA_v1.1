@@ -56,7 +56,7 @@ module enemy #(parameter number_of_brick=100)(
     int  hold_enemy_detroyed;
     bit reset_location;
     
-    // bit change;
+    bit change;
     assign col_enemy = x - x_enemy_l;
     assign row_enemy = y - y_enemy_t;
     assign rom_enemy = (hold_enemy_detroyed != 0) ? boom_rom_data : up ? rom_enemy_up : down ? rom_enemy_down : left ? rom_enemy_left : rom_enemy_right;
@@ -71,16 +71,16 @@ module enemy #(parameter number_of_brick=100)(
     always @(posedge clk_50MHz or negedge reset or posedge reset_location) begin
         if (!reset || reset_location) begin
             // Initialization logic
-            // case (enemy_index)
-            //     1: begin
+            case (enemy_index)
+                1: begin
                     x_enemy_register <= X_START_ENEMY;
                     y_enemy_register <= Y_START_ENEMY;
-            //     end
-            //     2: begin
-            //         x_enemy_register <= X_START_ENEMY_1;
-            //         y_enemy_register <= Y_START_ENEMY_1;
-            //     end
-            // endcase
+                end
+                2: begin
+                    x_enemy_register <= X_START_ENEMY_1;
+                    y_enemy_register <= Y_START_ENEMY_1;
+                end
+            endcase
         end
         else begin
             x_enemy_register <= x_enemy_next;
@@ -119,12 +119,22 @@ module enemy #(parameter number_of_brick=100)(
         if(refresh_tick) 
         begin
             if (reset_location) begin
-                y_enemy_next <= Y_START_ENEMY;
-                x_enemy_next <= X_START_ENEMY;
+                case (enemy_index)
+                    1: begin
+                        x_enemy_next <= X_START_ENEMY;
+                        y_enemy_next <= Y_START_ENEMY;
+                    end
+                    2: begin
+                        x_enemy_next <= X_START_ENEMY_1;
+                        y_enemy_next <= Y_START_ENEMY_1;
+                    end
+                endcase
+                // y_enemy_next <= Y_START_ENEMY;
+                // x_enemy_next <= X_START_ENEMY;
             end
             else
             begin
-                // change = 0;
+                change = 0;
                 if(up & (y_enemy_t > enemy_speed) & (y_enemy_t > (Y_TOP + enemy_speed)) && (|stop_up)==0 && !stop_up_by_tank)
                     y_enemy_next = y_enemy_register - enemy_speed;  // move up
                 else if(down & (y_enemy_b < (Y_MAX - enemy_speed)) & (y_enemy_b < (Y_BOTTOM - enemy_speed) && (|stop_down)==0) && !stop_down_by_tank)
@@ -137,7 +147,7 @@ module enemy #(parameter number_of_brick=100)(
                 //          (down  && !((y_enemy_b < (Y_MAX - enemy_speed)) && (y_enemy_b < (Y_BOTTOM - enemy_speed)) && (|stop_down)==0)) ||
                 //          (left  && !((x_enemy_l > enemy_speed) && (x_enemy_l > (X_LEFT + enemy_speed - 1)) && (|stop_left)==0)) ||
                 //          (right && !((x_enemy_r < (X_MAX - enemy_speed)) && (x_enemy_r < (X_RIGHT - enemy_speed)) && (|stop_right)==0)))
-                //     change = 1;
+                // change = 1;
             end
         end
     end  
@@ -173,7 +183,7 @@ endmodule : enemy
 module random_move (
     input wire clk,
     input wire rst,
-    // input wire change,
+    input wire change,
     input int enemy_detroyed,
     input int enemy_index,
     output reg up,
@@ -203,12 +213,12 @@ module random_move (
                 1: begin
                     state = MOVE_RIGHT;
                     direction = 2'b11;
-                    lfsr_state = 8'b1;//(enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
+                    lfsr_state = (enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
                 end
                 2: begin
                     state = MOVE_DOWN;
                     direction = 2'b01;
-                    lfsr_state = 8'b10;//(enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
+                    lfsr_state = (enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
                 end
             endcase
             
@@ -336,6 +346,9 @@ module enemy_bullet(
                         end
                         4'b0001: begin
                             x_bullet_next = x_bullet_reg + bullet_speed;
+                        end
+                        default : begin
+                            y_bullet_next = y_bullet_reg - bullet_speed;
                         end
                     endcase
                     if ((x_bullet_next > 607) || (x_bullet_next < 28) || (y_bullet_next > 447) || (y_bullet_next < 28) || hit || tank_detroyed)

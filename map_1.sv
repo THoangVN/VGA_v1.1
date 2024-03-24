@@ -12,15 +12,22 @@ module map_1 #(parameter number_of_brick = 100)(
     input [9:0] x_enemy_l,
     input [9:0] y_enemy_t,
     input [9:0] y_enemy_b,
+    input [9:0] x_enemy_r_2,
+    input [9:0] x_enemy_l_2,
+    input [9:0] y_enemy_t_2,
+    input [9:0] y_enemy_b_2,
     input [9:0] x_bullet_r,
     input [9:0] x_bullet_l,
     input [9:0] y_bullet_t,
     input [9:0] y_bullet_b,
     input [9:0] x_bullet_enemy,
     input [9:0] y_bullet_enemy,
+    input [9:0] x_bullet_enemy_2,
+    input [9:0] y_bullet_enemy_2,
     input [9:0] bullet_size,
     output hit,
     output hit_by_enemy,
+    output hit_by_enemy_2,
     output wire [number_of_brick-1:0] stop_go_up,
     output wire [number_of_brick-1:0] stop_go_down,
     output wire [number_of_brick-1:0] stop_go_left,
@@ -29,6 +36,10 @@ module map_1 #(parameter number_of_brick = 100)(
     output wire [number_of_brick-1:0] stop_enemy_go_down,
     output wire [number_of_brick-1:0] stop_enemy_go_left,
     output wire [number_of_brick-1:0] stop_enemy_go_right,
+    output wire [number_of_brick-1:0] stop_enemy_go_up_2,
+    output wire [number_of_brick-1:0] stop_enemy_go_down_2,
+    output wire [number_of_brick-1:0] stop_enemy_go_left_2,
+    output wire [number_of_brick-1:0] stop_enemy_go_right_2,
     output wire [number_of_brick-1:0] brick_on,
     output wire [29:0] brick_rom_data,
     output wire wall_on,  
@@ -154,6 +165,7 @@ module map_1 #(parameter number_of_brick = 100)(
         begin
             hit = 0;
             hit_by_enemy = 0;
+            hit_by_enemy_2 = 0;
             for (int i = 0; i < number_of_brick; i++) begin
                 if ((y_bullet_t < (y_brick_register[i] + 15)) && (y_bullet_b > y_brick_register[i]) && (x_bullet_l < (x_brick_register[i] + 15)) && (x_bullet_r > x_brick_register[i]))
                 begin
@@ -166,6 +178,12 @@ module map_1 #(parameter number_of_brick = 100)(
                     x_brick_next[i] = 0;
                     y_brick_next[i] = 0;
                     hit_by_enemy <= 1;
+                end
+                if ((y_bullet_enemy_2 < (y_brick_register[i] + 15)) && ((y_bullet_enemy_2 + 3) > y_brick_register[i]) && (x_bullet_enemy_2 < (x_brick_register[i] + 15)) && ((x_bullet_enemy_2+3) > x_brick_register[i]))
+                begin
+                    x_brick_next[i] = 0;
+                    y_brick_next[i] = 0;
+                    hit_by_enemy_2 <= 1;
                 end
             end
         end
@@ -186,6 +204,11 @@ module map_1 #(parameter number_of_brick = 100)(
             assign_stop   stop_down_2   (y_brick_t[i]-2, x_brick_l[i], x_brick_r[i], y_enemy_b, x_enemy_l, x_enemy_r, stop_enemy_go_down[i]);
             assign_stop   stop_left_2   (x_brick_r[i]+2, y_brick_t[i], y_brick_b[i], x_enemy_l, y_enemy_t, y_enemy_b, stop_enemy_go_left[i]);
             assign_stop   stop_right_2  (x_brick_l[i]-2, y_brick_t[i], y_brick_b[i], x_enemy_r, y_enemy_t, y_enemy_b, stop_enemy_go_right[i]);
+
+            assign_stop   stop_up_3     (y_brick_b[i]+2, x_brick_l[i], x_brick_r[i], y_enemy_t_2, x_enemy_l_2, x_enemy_r_2, stop_enemy_go_up_2[i]);
+            assign_stop   stop_down_3   (y_brick_t[i]-2, x_brick_l[i], x_brick_r[i], y_enemy_b_2, x_enemy_l_2, x_enemy_r_2, stop_enemy_go_down_2[i]);
+            assign_stop   stop_left_3   (x_brick_r[i]+2, y_brick_t[i], y_brick_b[i], x_enemy_l_2, y_enemy_t_2, y_enemy_b_2, stop_enemy_go_left_2[i]);
+            assign_stop   stop_right_3  (x_brick_l[i]-2, y_brick_t[i], y_brick_b[i], x_enemy_r_2, y_enemy_t_2, y_enemy_b_2, stop_enemy_go_right_2[i]);
             assign brick_on[i] = (x >= x_brick_l[i]) && (x <= x_brick_r[i]) && (y >= y_brick_t[i]) && (y <= y_brick_b[i]);
         end
     endgenerate
