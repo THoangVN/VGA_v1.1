@@ -19,16 +19,19 @@ module pixel_gen(
 //                   MAP SETTING                        //
 //------------------------------------------------------//
     localparam number_of_brick = 100;
+    localparam number_of_iron = 10;
     wire hit, hit_by_enemy;
     wire hit_by_enemy_2;
-    wire [number_of_brick-1:0] stop_up, stop_down, stop_left, stop_right ;
-    wire [number_of_brick-1:0] stop_enemy_up, stop_enemy_down, stop_enemy_left, stop_enemy_right ;
-    wire [number_of_brick-1:0] stop_enemy_up_2, stop_enemy_down_2, stop_enemy_left_2, stop_enemy_right_2 ;
+    wire [number_of_brick+number_of_iron-1:0] stop_up, stop_down, stop_left, stop_right ;
+    wire [number_of_brick+number_of_iron-1:0] stop_enemy_up, stop_enemy_down, stop_enemy_left, stop_enemy_right ;
+    wire [number_of_brick+number_of_iron-1:0] stop_enemy_up_2, stop_enemy_down_2, stop_enemy_left_2, stop_enemy_right_2 ;
     wire [number_of_brick-1:0] brick_on;
     wire wall_on;
+    wire [number_of_iron-1:0] iron_on;
     wire [29:0] brick_rom;
     wire [29:0] wall_rom;
-    map_1 #(number_of_brick) map_1_unit (   .clk_50MHz(clk_50MHz),
+    wire [29:0] iron_rom;
+    map_1 #(.number_of_brick(number_of_brick), .number_of_iron(number_of_iron)) map_1_unit (   .clk_50MHz(clk_50MHz),
                                             .reset(reset),
                                             .x(x),
                                             .y(y),
@@ -37,6 +40,8 @@ module pixel_gen(
                                             .refresh_tick(refresh_tick),
                                             .brick_rom_data(brick_rom),
                                             .wall_rom_data(wall_rom),
+                                            .iron_on(iron_on),
+                                            .iron_rom_data(iron_rom),
                                             .x_tank_r(x_tank_r),
                                             .x_tank_l(x_tank_l),
                                             .y_tank_t(y_tank_t),
@@ -75,8 +80,7 @@ module pixel_gen(
                                             .y_bullet_enemy_2(y_bullet_enemy_2)
                                             );
 
-// assign {stop_enemy_up_2 ,stop_enemy_down_2 , stop_enemy_left_2 , stop_enemy_right_2} = {stop_enemy_up ,stop_enemy_down , stop_enemy_left , stop_enemy_right};
-// assign hit_by_enemy_2 = hit_by_enemy ;
+
 //------------------------------------------------------//
 //                   ENEMY SETTING                      //
 //------------------------------------------------------//
@@ -97,62 +101,65 @@ module pixel_gen(
     wire [9:0] y_bullet_enemy_2;
     wire enemy_detroyed,enemy_detroyed_2;
     wire reset_loc,reset_loc_2;
-    enemy #(number_of_brick) enemy1 (   .clk_50MHz(clk_50MHz),
-                                        .reset(reset),                        
-                                        .x(x),                     
-                                        .y(y),                     
-                                        .refresh_tick(refresh_tick),
-                                        .stop_up(stop_enemy_up),
-                                        .stop_down(stop_enemy_down),
-                                        .stop_left(stop_enemy_left),
-                                        .stop_right(stop_enemy_right),
-                                        .x_enemy_r(x_enemy_r),
-                                        .x_enemy_l(x_enemy_l),
-                                        .y_enemy_t(y_enemy_t),
-                                        .y_enemy_b(y_enemy_b),
-                                        .enemy_on(enemy_on),
-                                        .rom_enemy(rom_enemy),
-                                        .bullet_on(bullet_on),
-                                        .x_bullet(x_bullet_enemy),
-                                        .y_bullet(y_bullet_enemy),
-                                        .x_tank(x_tank_reg),
-                                        .y_tank(y_tank_reg),
-                                        .x_tank_bullet(sq_x_next),
-                                        .y_tank_bullet(sq_y_next),
-                                        .hit(hit_by_enemy),
-                                        .tank_detroyed(tank_detroyed),
-                                        .reset_loc(reset_loc),
-                                        .enemy_index('d1),
-                                        .enemy_detroyed(enemy_detroyed)
-                                        );
-    enemy #(number_of_brick) enemy2 (   .clk_50MHz(clk_50MHz),
-                                        .reset(reset),                        
-                                        .x(x),                     
-                                        .y(y),                     
-                                        .refresh_tick(refresh_tick),
-                                        .stop_up(stop_enemy_up_2),
-                                        .stop_down(stop_enemy_down_2),
-                                        .stop_left(stop_enemy_left_2),
-                                        .stop_right(stop_enemy_right_2),
-                                        .x_enemy_r(x_enemy_r_2),
-                                        .x_enemy_l(x_enemy_l_2),
-                                        .y_enemy_t(y_enemy_t_2),
-                                        .y_enemy_b(y_enemy_b_2),
-                                        .enemy_on(enemy_on_2),
-                                        .rom_enemy(rom_enemy_2),
-                                        .bullet_on(bullet_on_2),
-                                        .x_bullet(x_bullet_enemy_2),
-                                        .y_bullet(y_bullet_enemy_2),
-                                        .x_tank(x_tank_reg),
-                                        .y_tank(y_tank_reg),
-                                        .x_tank_bullet(sq_x_next),
-                                        .y_tank_bullet(sq_y_next),
-                                        .hit(hit_by_enemy_2),
-                                        .tank_detroyed(tank_detroyed),
-                                        .enemy_index('d2),
-                                        .reset_loc(reset_loc_2),
-                                        .enemy_detroyed(enemy_detroyed_2)
-                                        );
+    
+    enemy #(.number_of_brick(number_of_brick),
+            .number_of_iron(number_of_iron)) enemy1 (   .clk_50MHz(clk_50MHz),
+                                                        .reset(reset),                        
+                                                        .x(x),                     
+                                                        .y(y),                     
+                                                        .refresh_tick(refresh_tick),
+                                                        .stop_up(stop_enemy_up),
+                                                        .stop_down(stop_enemy_down),
+                                                        .stop_left(stop_enemy_left),
+                                                        .stop_right(stop_enemy_right),
+                                                        .x_enemy_r(x_enemy_r),
+                                                        .x_enemy_l(x_enemy_l),
+                                                        .y_enemy_t(y_enemy_t),
+                                                        .y_enemy_b(y_enemy_b),
+                                                        .enemy_on(enemy_on),
+                                                        .rom_enemy(rom_enemy),
+                                                        .bullet_on(bullet_on),
+                                                        .x_bullet(x_bullet_enemy),
+                                                        .y_bullet(y_bullet_enemy),
+                                                        .x_tank(x_tank_reg),
+                                                        .y_tank(y_tank_reg),
+                                                        .x_tank_bullet(sq_x_next),
+                                                        .y_tank_bullet(sq_y_next),
+                                                        .hit(hit_by_enemy),
+                                                        .tank_detroyed(tank_detroyed),
+                                                        .reset_loc(reset_loc),
+                                                        .enemy_index('d1),
+                                                        .enemy_detroyed(enemy_detroyed)
+                                                        );
+    enemy #(.number_of_brick(number_of_brick),
+            .number_of_iron(number_of_iron)) enemy2 (   .clk_50MHz(clk_50MHz),
+                                                        .reset(reset),                        
+                                                        .x(x),                     
+                                                        .y(y),                     
+                                                        .refresh_tick(refresh_tick),
+                                                        .stop_up(stop_enemy_up_2),
+                                                        .stop_down(stop_enemy_down_2),
+                                                        .stop_left(stop_enemy_left_2),
+                                                        .stop_right(stop_enemy_right_2),
+                                                        .x_enemy_r(x_enemy_r_2),
+                                                        .x_enemy_l(x_enemy_l_2),
+                                                        .y_enemy_t(y_enemy_t_2),
+                                                        .y_enemy_b(y_enemy_b_2),
+                                                        .enemy_on(enemy_on_2),
+                                                        .rom_enemy(rom_enemy_2),
+                                                        .bullet_on(bullet_on_2),
+                                                        .x_bullet(x_bullet_enemy_2),
+                                                        .y_bullet(y_bullet_enemy_2),
+                                                        .x_tank(x_tank_reg),
+                                                        .y_tank(y_tank_reg),
+                                                        .x_tank_bullet(sq_x_next),
+                                                        .y_tank_bullet(sq_y_next),
+                                                        .hit(hit_by_enemy_2),
+                                                        .tank_detroyed(tank_detroyed),
+                                                        .enemy_index('d2),
+                                                        .reset_loc(reset_loc_2),
+                                                        .enemy_detroyed(enemy_detroyed_2)
+                                                        );
 
 //------------------------------------------------------//
 //                  TANK SETTING                        //
@@ -290,7 +297,7 @@ module pixel_gen(
     tank_down_rom   rom2(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data2));
     tank_left_rom   rom3(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data3));
     tank_right_rom  rom4(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data4));
-    boom_rom        tank_boom(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data5));
+    boom_tank_rom        tank_boom(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data5));
     
     // **** ROM BOUNDARIES / STATUS SIGNALS ****
     // tank rom data square boundaries
@@ -716,7 +723,9 @@ module pixel_gen(
                     else rgb = rom_heart_off;
 
             else if(wall_on)
-                rgb = wall_rom;					   
+                rgb = wall_rom;	
+            else if (|iron_on)
+                rgb = iron_rom;
             else if (|brick_on)
                 rgb = brick_rom;
         

@@ -1,13 +1,14 @@
-module enemy #(parameter number_of_brick=100)(
+module enemy #( parameter number_of_brick = 100, 
+                parameter number_of_iron = 10)(
     input clk_50MHz,      // sys clock
     input reset,                // sys reset
     input [9:0] x,              // from VGA controller
     input [9:0] y,              // from VGA controller
     input refresh_tick,
-    input wire [number_of_brick-1:0] stop_up,
-    input wire [number_of_brick-1:0] stop_down,
-    input wire [number_of_brick-1:0] stop_left,
-    input wire [number_of_brick-1:0] stop_right,
+    input wire [number_of_brick+number_of_iron-1:0] stop_up,
+    input wire [number_of_brick+number_of_iron-1:0] stop_down,
+    input wire [number_of_brick+number_of_iron-1:0] stop_left,
+    input wire [number_of_brick+number_of_iron-1:0] stop_right,
     input hit,
     input tank_detroyed,
     input [9:0] x_tank_bullet,
