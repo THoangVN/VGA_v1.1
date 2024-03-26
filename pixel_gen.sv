@@ -631,9 +631,9 @@ module pixel_gen(
 //------------------------------------------------------//
     // Pixel Location Status Signals
     wire upper_yellow_on, lower_yellow_on, street_on, water_on, street_2_on;
-    wire [29:0] rom_sand   ;// = YELLOW;
-    wire [29:0] rom_water  ;// = BLUE;
-    wire [29:0] rom_road   ;// = BLACK;
+    wire [29:0] rom_sand   = YELLOW;
+    wire [29:0] rom_water  = BLUE;
+    wire [29:0] rom_road   = BLACK;
     // Drivers for Status Signals
     assign upper_yellow_on  = ((x >= 32) && (x < 608) && (y >= 228) && (y < 260));
     assign lower_yellow_on  = ((x >= 32) && (x < 608) && (y >= 420) && (y < 452));
@@ -641,9 +641,9 @@ module pixel_gen(
     assign street_2_on      = ((x >= 32) && (x < 608) && (y >= 31) && (y < 68));
     assign water_on         = ((x >= 32) && (x < 608) && (y >= 68) && (y < 228));
 
-    sand_rom    sand_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_sand));
-    water_rom   water_unit (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_water));
-    road_rom    road_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_road));
+    // sand_rom    sand_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_sand));
+    // water_rom   water_unit (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_water));
+    // road_rom    road_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_road));
 
     always @* begin
         if ((~video_on))
