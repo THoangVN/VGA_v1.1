@@ -17,6 +17,10 @@ module map_1 #( parameter number_of_brick = 100,
     input [9:0] x_enemy_l_2,
     input [9:0] y_enemy_t_2,
     input [9:0] y_enemy_b_2,
+    input [9:0] x_enemy_r_3,
+    input [9:0] x_enemy_l_3,
+    input [9:0] y_enemy_t_3,
+    input [9:0] y_enemy_b_3,
     input [9:0] x_bullet_r,
     input [9:0] x_bullet_l,
     input [9:0] y_bullet_t,
@@ -25,10 +29,13 @@ module map_1 #( parameter number_of_brick = 100,
     input [9:0] y_bullet_enemy,
     input [9:0] x_bullet_enemy_2,
     input [9:0] y_bullet_enemy_2,
+    input [9:0] x_bullet_enemy_3,
+    input [9:0] y_bullet_enemy_3,
     input [9:0] bullet_size,
     output hit,
     output hit_by_enemy,
     output hit_by_enemy_2,
+    output hit_by_enemy_3,
     output wire [number_of_brick+number_of_iron-1:0] stop_go_up,
     output wire [number_of_brick+number_of_iron-1:0] stop_go_down,
     output wire [number_of_brick+number_of_iron-1:0] stop_go_left,
@@ -41,6 +48,10 @@ module map_1 #( parameter number_of_brick = 100,
     output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_down_2,
     output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_left_2,
     output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_right_2,
+    output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_up_3,
+    output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_down_3,
+    output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_left_3,
+    output wire [number_of_brick+number_of_iron-1:0] stop_enemy_go_right_3,
     output wire [number_of_brick-1:0] brick_on,
     output wire [29:0] brick_rom_data,
     output wire wall_on,  
@@ -219,6 +230,7 @@ module map_1 #( parameter number_of_brick = 100,
             hit = 0;
             hit_by_enemy = 0;
             hit_by_enemy_2 = 0;
+            hit_by_enemy_3 = 0;
             for (int i = 0; i < number_of_brick; i++) begin
                 if ((y_bullet_t < (y_brick_register[i] + 15)) && (y_bullet_b > y_brick_register[i]) && (x_bullet_l < (x_brick_register[i] + 15)) && (x_bullet_r > x_brick_register[i]))
                 begin
@@ -238,6 +250,12 @@ module map_1 #( parameter number_of_brick = 100,
                     y_brick_next[i] = 0;
                     hit_by_enemy_2 <= 1;
                 end
+                if ((y_bullet_enemy_3 < (y_brick_register[i] + 15)) && ((y_bullet_enemy_3 + 3) > y_brick_register[i]) && (x_bullet_enemy_3 < (x_brick_register[i] + 15)) && ((x_bullet_enemy_3+3) > x_brick_register[i]))
+                begin
+                    x_brick_next[i] = 0;
+                    y_brick_next[i] = 0;
+                    hit_by_enemy_3 <= 1;
+                end
             end
 
             for (int j = 0; j < number_of_iron; j++) begin
@@ -247,6 +265,8 @@ module map_1 #( parameter number_of_brick = 100,
                     hit_by_enemy <= 1;
                 if ((y_bullet_enemy_2 < (y_iron_register[j] + 31)) && ((y_bullet_enemy_2 + 3) > y_iron_register[j]) && (x_bullet_enemy_2 < (x_iron_register[j] + 31)) && ((x_bullet_enemy_2+3) > x_iron_register[j]))
                     hit_by_enemy_2 <= 1;
+                if ((y_bullet_enemy_3 < (y_iron_register[j] + 31)) && ((y_bullet_enemy_3 + 3) > y_iron_register[j]) && (x_bullet_enemy_3 < (x_iron_register[j] + 31)) && ((x_bullet_enemy_3+3) > x_iron_register[j]))
+                    hit_by_enemy_3 <= 1;
             end
         end
     end
@@ -272,6 +292,11 @@ module map_1 #( parameter number_of_brick = 100,
             assign_stop   stop_down_3   (y_brick_t[i]-2, x_brick_l[i], x_brick_r[i], y_enemy_b_2, x_enemy_l_2, x_enemy_r_2, stop_enemy_go_down_2[i]);
             assign_stop   stop_left_3   (x_brick_r[i]+2, y_brick_t[i], y_brick_b[i], x_enemy_l_2, y_enemy_t_2, y_enemy_b_2, stop_enemy_go_left_2[i]);
             assign_stop   stop_right_3  (x_brick_l[i]-2, y_brick_t[i], y_brick_b[i], x_enemy_r_2, y_enemy_t_2, y_enemy_b_2, stop_enemy_go_right_2[i]);
+            
+            assign_stop   stop_up_4     (y_brick_b[i]+2, x_brick_l[i], x_brick_r[i], y_enemy_t_3, x_enemy_l_3, x_enemy_r_3, stop_enemy_go_up_3[i]);
+            assign_stop   stop_down_4   (y_brick_t[i]-2, x_brick_l[i], x_brick_r[i], y_enemy_b_3, x_enemy_l_3, x_enemy_r_3, stop_enemy_go_down_3[i]);
+            assign_stop   stop_left_4   (x_brick_r[i]+2, y_brick_t[i], y_brick_b[i], x_enemy_l_3, y_enemy_t_3, y_enemy_b_3, stop_enemy_go_left_3[i]);
+            assign_stop   stop_right_4  (x_brick_l[i]-2, y_brick_t[i], y_brick_b[i], x_enemy_r_3, y_enemy_t_3, y_enemy_b_3, stop_enemy_go_right_3[i]);
             assign brick_on[i] = (x >= x_brick_l[i]) && (x <= x_brick_r[i]) && (y >= y_brick_t[i]) && (y <= y_brick_b[i]);
         end
     endgenerate
@@ -297,6 +322,11 @@ module map_1 #( parameter number_of_brick = 100,
             assign_stop   iron_stop_down_3      (y_iron_t[j]-2, x_iron_l[j], x_iron_r[j], y_enemy_b_2, x_enemy_l_2, x_enemy_r_2, stop_enemy_go_down_2 [j+number_of_brick]);
             assign_stop   iron_stop_left_3      (x_iron_r[j]+2, y_iron_t[j], y_iron_b[j], x_enemy_l_2, y_enemy_t_2, y_enemy_b_2, stop_enemy_go_left_2 [j+number_of_brick]);
             assign_stop   iron_stop_right_3     (x_iron_l[j]-2, y_iron_t[j], y_iron_b[j], x_enemy_r_2, y_enemy_t_2, y_enemy_b_2, stop_enemy_go_right_2[j+number_of_brick]);
+            
+            assign_stop   iron_stop_up_4        (y_iron_b[j]+2, x_iron_l[j], x_iron_r[j], y_enemy_t_3, x_enemy_l_3, x_enemy_r_3, stop_enemy_go_up_3   [j+number_of_brick]);
+            assign_stop   iron_stop_down_4      (y_iron_t[j]-2, x_iron_l[j], x_iron_r[j], y_enemy_b_3, x_enemy_l_3, x_enemy_r_3, stop_enemy_go_down_3 [j+number_of_brick]);
+            assign_stop   iron_stop_left_4      (x_iron_r[j]+2, y_iron_t[j], y_iron_b[j], x_enemy_l_3, y_enemy_t_3, y_enemy_b_3, stop_enemy_go_left_3 [j+number_of_brick]);
+            assign_stop   iron_stop_right_4     (x_iron_l[j]-2, y_iron_t[j], y_iron_b[j], x_enemy_r_3, y_enemy_t_3, y_enemy_b_3, stop_enemy_go_right_3[j+number_of_brick]);
             assign iron_on[j] = (x >= x_iron_l[j]) && (x <= x_iron_r[j]) && (y >= y_iron_t[j]) && (y <= y_iron_b[j]);
         end
     endgenerate

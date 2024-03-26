@@ -22,63 +22,77 @@ module pixel_gen(
     localparam number_of_iron = 10;
     wire hit, hit_by_enemy;
     wire hit_by_enemy_2;
+    wire hit_by_enemy_3;
     wire [number_of_brick+number_of_iron-1:0] stop_up, stop_down, stop_left, stop_right ;
     wire [number_of_brick+number_of_iron-1:0] stop_enemy_up, stop_enemy_down, stop_enemy_left, stop_enemy_right ;
     wire [number_of_brick+number_of_iron-1:0] stop_enemy_up_2, stop_enemy_down_2, stop_enemy_left_2, stop_enemy_right_2 ;
+    wire [number_of_brick+number_of_iron-1:0] stop_enemy_up_3, stop_enemy_down_3, stop_enemy_left_3, stop_enemy_right_3 ;
     wire [number_of_brick-1:0] brick_on;
     wire wall_on;
     wire [number_of_iron-1:0] iron_on;
     wire [29:0] brick_rom;
     wire [29:0] wall_rom;
     wire [29:0] iron_rom;
-    map_1 #(.number_of_brick(number_of_brick), .number_of_iron(number_of_iron)) map_1_unit (   .clk_50MHz(clk_50MHz),
-                                            .reset(reset),
-                                            .x(x),
-                                            .y(y),
-                                            .brick_on(brick_on),
-                                            .wall_on(wall_on),
-                                            .refresh_tick(refresh_tick),
-                                            .brick_rom_data(brick_rom),
-                                            .wall_rom_data(wall_rom),
-                                            .iron_on(iron_on),
-                                            .iron_rom_data(iron_rom),
-                                            .x_tank_r(x_tank_r),
-                                            .x_tank_l(x_tank_l),
-                                            .y_tank_t(y_tank_t),
-                                            .y_tank_b(y_tank_b),
-                                            .x_enemy_r(x_enemy_r),
-                                            .x_enemy_l(x_enemy_l),
-                                            .y_enemy_t(y_enemy_t),
-                                            .y_enemy_b(y_enemy_b),
-                                            .x_enemy_r_2(x_enemy_r_2),
-                                            .x_enemy_l_2(x_enemy_l_2),
-                                            .y_enemy_t_2(y_enemy_t_2),
-                                            .y_enemy_b_2(y_enemy_b_2),
-                                            .x_bullet_r(sq_x_reg+3),
-                                            .x_bullet_l(sq_x_reg),
-                                            .y_bullet_t(sq_y_reg),
-                                            .y_bullet_b(sq_y_reg+3),
-                                            .hit(hit),
-                                            .hit_by_enemy(hit_by_enemy),
-                                            .hit_by_enemy_2(hit_by_enemy_2),
-                                            .bullet_size(SQUARE_SIZE),
-                                            .stop_go_up(stop_up),
-                                            .stop_go_down(stop_down),
-                                            .stop_go_left(stop_left),
-                                            .stop_go_right(stop_right),
-                                            .stop_enemy_go_up(stop_enemy_up),
-                                            .stop_enemy_go_down(stop_enemy_down),
-                                            .stop_enemy_go_left(stop_enemy_left),
-                                            .stop_enemy_go_right(stop_enemy_right),
-                                            .stop_enemy_go_up_2(stop_enemy_up_2),
-                                            .stop_enemy_go_down_2(stop_enemy_down_2),
-                                            .stop_enemy_go_left_2(stop_enemy_left_2),
-                                            .stop_enemy_go_right_2(stop_enemy_right_2),
-                                            .x_bullet_enemy(x_bullet_enemy),
-                                            .y_bullet_enemy(y_bullet_enemy),
-                                            .x_bullet_enemy_2(x_bullet_enemy_2),
-                                            .y_bullet_enemy_2(y_bullet_enemy_2)
-                                            );
+    map_1 #(.number_of_brick(number_of_brick), 
+            .number_of_iron(number_of_iron)) map_1_unit (   .clk_50MHz(clk_50MHz),
+                                                            .reset(reset),
+                                                            .x(x),
+                                                            .y(y),
+                                                            .brick_on(brick_on),
+                                                            .wall_on(wall_on),
+                                                            .refresh_tick(refresh_tick),
+                                                            .brick_rom_data(brick_rom),
+                                                            .wall_rom_data(wall_rom),
+                                                            .iron_on(iron_on),
+                                                            .iron_rom_data(iron_rom),
+                                                            .x_tank_r(x_tank_r),
+                                                            .x_tank_l(x_tank_l),
+                                                            .y_tank_t(y_tank_t),
+                                                            .y_tank_b(y_tank_b),
+                                                            .x_enemy_r(x_enemy_r),
+                                                            .x_enemy_l(x_enemy_l),
+                                                            .y_enemy_t(y_enemy_t),
+                                                            .y_enemy_b(y_enemy_b),
+                                                            .x_enemy_r_2(x_enemy_r_2),
+                                                            .x_enemy_l_2(x_enemy_l_2),
+                                                            .y_enemy_t_2(y_enemy_t_2),
+                                                            .y_enemy_b_2(y_enemy_b_2),
+                                                            .x_enemy_r_3(x_enemy_r_3),
+                                                            .x_enemy_l_3(x_enemy_l_3),
+                                                            .y_enemy_t_3(y_enemy_t_3),
+                                                            .y_enemy_b_3(y_enemy_b_3),
+                                                            .x_bullet_r(sq_x_reg+3),
+                                                            .x_bullet_l(sq_x_reg),
+                                                            .y_bullet_t(sq_y_reg),
+                                                            .y_bullet_b(sq_y_reg+3),
+                                                            .hit(hit),
+                                                            .hit_by_enemy(hit_by_enemy),
+                                                            .hit_by_enemy_2(hit_by_enemy_2),
+                                                            .hit_by_enemy_3(hit_by_enemy_3),
+                                                            .bullet_size(SQUARE_SIZE),
+                                                            .stop_go_up(stop_up),
+                                                            .stop_go_down(stop_down),
+                                                            .stop_go_left(stop_left),
+                                                            .stop_go_right(stop_right),
+                                                            .stop_enemy_go_up(stop_enemy_up),
+                                                            .stop_enemy_go_down(stop_enemy_down),
+                                                            .stop_enemy_go_left(stop_enemy_left),
+                                                            .stop_enemy_go_right(stop_enemy_right),
+                                                            .stop_enemy_go_up_2(stop_enemy_up_2),
+                                                            .stop_enemy_go_down_2(stop_enemy_down_2),
+                                                            .stop_enemy_go_left_2(stop_enemy_left_2),
+                                                            .stop_enemy_go_right_2(stop_enemy_right_2),
+                                                            .stop_enemy_go_up_3(stop_enemy_up_3),
+                                                            .stop_enemy_go_down_3(stop_enemy_down_3),
+                                                            .stop_enemy_go_left_3(stop_enemy_left_3),
+                                                            .stop_enemy_go_right_3(stop_enemy_right_3),
+                                                            .x_bullet_enemy(x_bullet_enemy),
+                                                            .y_bullet_enemy(y_bullet_enemy),
+                                                            .x_bullet_enemy_2(x_bullet_enemy_2),
+                                                            .y_bullet_enemy_2(y_bullet_enemy_2),
+                                                            .x_bullet_enemy_3(x_bullet_enemy_3),
+                                                            .y_bullet_enemy_3(y_bullet_enemy_3)
+                                                            );
 
 
 //------------------------------------------------------//
@@ -87,6 +101,7 @@ module pixel_gen(
     wire enemy_on, bullet_on, enemy_on_2, bullet_on_2;
     wire [29:0] rom_enemy;
     wire [29:0] rom_enemy_2;
+    wire [29:0] rom_enemy_3;
     wire [9:0] x_enemy_l;
     wire [9:0] x_enemy_r;
     wire [9:0] y_enemy_t;
@@ -95,15 +110,75 @@ module pixel_gen(
     wire [9:0] x_enemy_r_2;
     wire [9:0] y_enemy_t_2;
     wire [9:0] y_enemy_b_2;
+    wire [9:0] x_enemy_l_3;
+    wire [9:0] x_enemy_r_3;
+    wire [9:0] y_enemy_t_3;
+    wire [9:0] y_enemy_b_3;
     wire [9:0] x_bullet_enemy;
     wire [9:0] y_bullet_enemy;
     wire [9:0] x_bullet_enemy_2;
     wire [9:0] y_bullet_enemy_2;
-    wire enemy_detroyed,enemy_detroyed_2;
-    wire reset_loc,reset_loc_2;
+    wire [9:0] x_bullet_enemy_3;
+    wire [9:0] y_bullet_enemy_3;
+    wire enemy_detroyed,enemy_detroyed_2,enemy_detroyed_3;
+    wire reset_loc,reset_loc_2,reset_loc_3;
+    wire stop_up_by_enemy_1_2;
+    wire stop_down_by_enemy_1_2;
+    wire stop_left_by_enemy_1_2;
+    wire stop_right_by_enemy_1_2;
+    wire stop_up_by_enemy_2_1;
+    wire stop_down_by_enemy_2_1;
+    wire stop_left_by_enemy_2_1;
+    wire stop_right_by_enemy_2_1;
+    wire stop_up_by_enemy_1_3;
+    wire stop_down_by_enemy_1_3;
+    wire stop_left_by_enemy_1_3;
+    wire stop_right_by_enemy_1_3;
+    wire stop_up_by_enemy_2_3;
+    wire stop_down_by_enemy_2_3;
+    wire stop_left_by_enemy_2_3;
+    wire stop_right_by_enemy_2_3;
+    wire stop_up_by_enemy_3_2;
+    wire stop_down_by_enemy_3_2;
+    wire stop_left_by_enemy_3_2;
+    wire stop_right_by_enemy_3_2;
+    wire stop_up_by_enemy_3_1;
+    wire stop_down_by_enemy_3_1;
+    wire stop_left_by_enemy_3_1;
+    wire stop_right_by_enemy_3_1;
     
+    assign stop_up_by_enemy_1_2     = ((y_enemy_b_2 + 1) == y_enemy_t) && (x_enemy_l <= x_enemy_r_2) && (x_enemy_r >= x_enemy_l_2);
+    assign stop_down_by_enemy_1_2   = ((y_enemy_t_2 - 1) == y_enemy_b) && (x_enemy_l <= x_enemy_r_2) && (x_enemy_r >= x_enemy_l_2);
+    assign stop_left_by_enemy_1_2   = ((x_enemy_r_2 + 1) == x_enemy_l) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
+    assign stop_right_by_enemy_1_2  = ((x_enemy_l_2 - 1) == x_enemy_r) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
+    
+    assign stop_up_by_enemy_2_1     = ((y_enemy_b + 1) == y_enemy_t_2) && (x_enemy_l <= x_enemy_r_2) && (x_enemy_r >= x_enemy_l_2);
+    assign stop_down_by_enemy_2_1   = ((y_enemy_t - 1) == y_enemy_b_2) && (x_enemy_l <= x_enemy_r_2) && (x_enemy_r >= x_enemy_l_2);
+    assign stop_left_by_enemy_2_1   = ((x_enemy_r + 1) == x_enemy_l_2) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
+    assign stop_right_by_enemy_1_1  = ((x_enemy_l - 1) == x_enemy_r_2) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
+
+    assign stop_up_by_enemy_1_3     = ((y_enemy_b_3 + 1) == y_enemy_t) && (x_enemy_l <= x_enemy_r_3) && (x_enemy_r >= x_enemy_l_3);
+    assign stop_down_by_enemy_1_3   = ((y_enemy_t_3 - 1) == y_enemy_b) && (x_enemy_l <= x_enemy_r_3) && (x_enemy_r >= x_enemy_l_3);
+    assign stop_left_by_enemy_1_3   = ((x_enemy_r_3 + 1) == x_enemy_l) && (y_enemy_t <= y_enemy_b_3) && (y_enemy_b >= y_enemy_t_3);
+    assign stop_right_by_enemy_1_3  = ((x_enemy_l_3 - 1) == x_enemy_r) && (y_enemy_t <= y_enemy_b_3) && (y_enemy_b >= y_enemy_t_3);
+    
+    assign stop_up_by_enemy_2_3     = ((y_enemy_b_3 + 1) == y_enemy_t_2) && (x_enemy_l_3 <= x_enemy_r_2) && (x_enemy_r_3 >= x_enemy_l_2);
+    assign stop_down_by_enemy_2_3   = ((y_enemy_t_3 - 1) == y_enemy_b_2) && (x_enemy_l_3 <= x_enemy_r_2) && (x_enemy_r_3 >= x_enemy_l_2);
+    assign stop_left_by_enemy_2_3   = ((x_enemy_r_3 + 1) == x_enemy_l_2) && (y_enemy_t_3 <= y_enemy_b_2) && (y_enemy_b_3 >= y_enemy_t_2);
+    assign stop_right_by_enemy_2_3  = ((x_enemy_l_3 - 1) == x_enemy_r_2) && (y_enemy_t_3 <= y_enemy_b_2) && (y_enemy_b_3 >= y_enemy_t_2);
+
+    assign stop_up_by_enemy_3_2     = ((y_enemy_b_2 + 1) == y_enemy_t_3) && (x_enemy_l_3 <= x_enemy_r_2) && (x_enemy_r_3 >= x_enemy_l_2);
+    assign stop_down_by_enemy_3_2   = ((y_enemy_t_2 - 1) == y_enemy_b_3) && (x_enemy_l_3 <= x_enemy_r_2) && (x_enemy_r_3 >= x_enemy_l_2);
+    assign stop_left_by_enemy_3_2   = ((x_enemy_r_2 + 1) == x_enemy_l_3) && (y_enemy_t_3 <= y_enemy_b_2) && (y_enemy_b_3 >= y_enemy_t_2);
+    assign stop_right_by_enemy_3_2  = ((x_enemy_l_2 - 1) == x_enemy_r_3) && (y_enemy_t_3 <= y_enemy_b_2) && (y_enemy_b_3 >= y_enemy_t_2);
+    
+    assign stop_up_by_enemy_3_1     = ((y_enemy_b + 1) == y_enemy_t_3) && (x_enemy_l <= x_enemy_r_3) && (x_enemy_r >= x_enemy_l_3);
+    assign stop_down_by_enemy_3_1   = ((y_enemy_t - 1) == y_enemy_b_3) && (x_enemy_l <= x_enemy_r_3) && (x_enemy_r >= x_enemy_l_3);
+    assign stop_left_by_enemy_3_1   = ((x_enemy_r + 1) == x_enemy_l_3) && (y_enemy_t <= y_enemy_b_3) && (y_enemy_b >= y_enemy_t_3);
+    assign stop_right_by_enemy_3_1  = ((x_enemy_l - 1) == x_enemy_r_3) && (y_enemy_t <= y_enemy_b_3) && (y_enemy_b >= y_enemy_t_3);
+
     enemy #(.number_of_brick(number_of_brick),
-            .number_of_iron(number_of_iron)) enemy1 (   .clk_50MHz(clk_50MHz),
+            .number_of_iron(number_of_iron))    enemy1 (.clk_50MHz(clk_50MHz),
                                                         .reset(reset),                        
                                                         .x(x),                     
                                                         .y(y),                     
@@ -129,10 +204,18 @@ module pixel_gen(
                                                         .tank_detroyed(tank_detroyed),
                                                         .reset_loc(reset_loc),
                                                         .enemy_index('d1),
-                                                        .enemy_detroyed(enemy_detroyed)
+                                                        .enemy_detroyed(enemy_detroyed),
+                                                        .enemy_stop_up_by_enemy(stop_up_by_enemy_1_2),
+                                                        .enemy_stop_down_by_enemy(stop_down_by_enemy_1_2),
+                                                        .enemy_stop_left_by_enemy(stop_left_by_enemy_1_2),
+                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy_1_2),
+                                                        .enemy_stop_up_by_enemy_1(stop_up_by_enemy_1_3),
+                                                        .enemy_stop_down_by_enemy_1(stop_down_by_enemy_1_3),
+                                                        .enemy_stop_left_by_enemy_1(stop_left_by_enemy_1_3),
+                                                        .enemy_stop_right_by_enemy_1(stop_right_by_enemy_1_3)
                                                         );
     enemy #(.number_of_brick(number_of_brick),
-            .number_of_iron(number_of_iron)) enemy2 (   .clk_50MHz(clk_50MHz),
+            .number_of_iron(number_of_iron))    enemy2 (.clk_50MHz(clk_50MHz),
                                                         .reset(reset),                        
                                                         .x(x),                     
                                                         .y(y),                     
@@ -158,7 +241,52 @@ module pixel_gen(
                                                         .tank_detroyed(tank_detroyed),
                                                         .enemy_index('d2),
                                                         .reset_loc(reset_loc_2),
-                                                        .enemy_detroyed(enemy_detroyed_2)
+                                                        .enemy_detroyed(enemy_detroyed_2),
+                                                        .enemy_stop_up_by_enemy(stop_up_by_enemy_2_1),
+                                                        .enemy_stop_down_by_enemy(stop_down_by_enemy_2_1),
+                                                        .enemy_stop_left_by_enemy(stop_left_by_enemy_2_1),
+                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy2_1),
+                                                        .enemy_stop_up_by_enemy_1(stop_up_by_enemy_2_3),
+                                                        .enemy_stop_down_by_enemy_1(stop_down_by_enemy_2_3),
+                                                        .enemy_stop_left_by_enemy_1(stop_left_by_enemy_2_3),
+                                                        .enemy_stop_right_by_enemy_1(stop_right_by_enemy_2_3)
+                                                        );
+    enemy #(.number_of_brick(number_of_brick),
+            .number_of_iron(number_of_iron))    enemy3 (.clk_50MHz(clk_50MHz),
+                                                        .reset(reset),                        
+                                                        .x(x),                     
+                                                        .y(y),                     
+                                                        .refresh_tick(refresh_tick),
+                                                        .stop_up(stop_enemy_up_3),
+                                                        .stop_down(stop_enemy_down_3),
+                                                        .stop_left(stop_enemy_left_3),
+                                                        .stop_right(stop_enemy_right_3),
+                                                        .x_enemy_r(x_enemy_r_3),
+                                                        .x_enemy_l(x_enemy_l_3),
+                                                        .y_enemy_t(y_enemy_t_3),
+                                                        .y_enemy_b(y_enemy_b_3),
+                                                        .enemy_on(enemy_on_3),
+                                                        .rom_enemy(rom_enemy_3),
+                                                        .bullet_on(bullet_on_3),
+                                                        .x_bullet(x_bullet_enemy_3),
+                                                        .y_bullet(y_bullet_enemy_3),
+                                                        .x_tank(x_tank_reg),
+                                                        .y_tank(y_tank_reg),
+                                                        .x_tank_bullet(sq_x_next),
+                                                        .y_tank_bullet(sq_y_next),
+                                                        .hit(hit_by_enemy_3),
+                                                        .tank_detroyed(tank_detroyed),
+                                                        .enemy_index('d3),
+                                                        .reset_loc(reset_loc_3),
+                                                        .enemy_detroyed(enemy_detroyed_3),
+                                                        .enemy_stop_up_by_enemy(stop_up_by_enemy_3_1),
+                                                        .enemy_stop_down_by_enemy(stop_down_by_enemy_3_1),
+                                                        .enemy_stop_left_by_enemy(stop_left_by_enemy_3_1),
+                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy3_1),
+                                                        .enemy_stop_up_by_enemy_1(stop_up_by_enemy_3_2),
+                                                        .enemy_stop_down_by_enemy_1(stop_down_by_enemy_3_2),
+                                                        .enemy_stop_left_by_enemy_1(stop_left_by_enemy_3_2),
+                                                        .enemy_stop_right_by_enemy_1(stop_right_by_enemy_3_2)
                                                         );
 
 //------------------------------------------------------//
@@ -192,16 +320,21 @@ module pixel_gen(
     bit reset_bullet;
 
     assign reset_bullet = reset ;
-    assign tank_detroyed = (((y_bullet_enemy ) < y_tank_b) && (((y_bullet_enemy+3) ) > y_tank_t) && ((x_bullet_enemy ) < x_tank_r) && (((x_bullet_enemy+3) ) > x_tank_l))
-                        || (((y_bullet_enemy_2 ) < y_tank_b) && (((y_bullet_enemy_2+3) ) > y_tank_t) && ((x_bullet_enemy_2 ) < x_tank_r) && (((x_bullet_enemy_2+3) ) > x_tank_l));
-    assign stop_up_by_enemy    = (y_tank_t == (y_enemy_b )) && (x_tank_l <= (x_enemy_r )) && (x_tank_r >= (x_enemy_l ))
-                                ||(y_tank_t == (y_enemy_b_2 )) && (x_tank_l <= (x_enemy_r_2 )) && (x_tank_r >= (x_enemy_l_2 ));
-    assign stop_down_by_enemy  = (y_tank_b == (y_enemy_t )) && (x_tank_l <= (x_enemy_r )) && (x_tank_r >= (x_enemy_l ))
-                                ||(y_tank_b == (y_enemy_t_2 )) && (x_tank_l <= (x_enemy_r_2 )) && (x_tank_r >= (x_enemy_l_2 ));
-    assign stop_left_by_enemy  = (x_tank_l == (x_enemy_r )) && (y_tank_t <= (y_enemy_b )) && (y_tank_b >= (y_enemy_t ))
-                                ||(x_tank_l == (x_enemy_r_2 )) && (y_tank_t <= (y_enemy_b_2 )) && (y_tank_b >= (y_enemy_t_2 ));
-    assign stop_right_by_enemy = (x_tank_r == (x_enemy_l )) && (y_tank_t <= (y_enemy_b )) && (y_tank_b >= (y_enemy_t ))
-                                ||(x_tank_r == (x_enemy_l_2 )) && (y_tank_t <= (y_enemy_b_2 )) && (y_tank_b >= (y_enemy_t_2 ));
+    assign tank_detroyed = (((y_bullet_enemy ) < y_tank_b)   && (((y_bullet_enemy+3) ) > y_tank_t)   && ((x_bullet_enemy ) < x_tank_r)   && (((x_bullet_enemy+3) ) > x_tank_l))
+                        || (((y_bullet_enemy_2 ) < y_tank_b) && (((y_bullet_enemy_2+3) ) > y_tank_t) && ((x_bullet_enemy_2 ) < x_tank_r) && (((x_bullet_enemy_2+3) ) > x_tank_l))
+                        || (((y_bullet_enemy_3 ) < y_tank_b) && (((y_bullet_enemy_3+3) ) > y_tank_t) && ((x_bullet_enemy_3 ) < x_tank_r) && (((x_bullet_enemy_3+3) ) > x_tank_l));
+    assign stop_up_by_enemy     = (y_tank_t == (y_enemy_b ))   && (x_tank_l <= (x_enemy_r ))   && (x_tank_r >= (x_enemy_l ))
+                                ||(y_tank_t == (y_enemy_b_2 )) && (x_tank_l <= (x_enemy_r_2 )) && (x_tank_r >= (x_enemy_l_2 ))
+                                ||(y_tank_t == (y_enemy_b_3 )) && (x_tank_l <= (x_enemy_r_3 )) && (x_tank_r >= (x_enemy_l_3 ));
+    assign stop_down_by_enemy  = (y_tank_b == (y_enemy_t ))    && (x_tank_l <= (x_enemy_r ))   && (x_tank_r >= (x_enemy_l ))
+                                ||(y_tank_b == (y_enemy_t_2 )) && (x_tank_l <= (x_enemy_r_2 )) && (x_tank_r >= (x_enemy_l_2 ))
+                                ||(y_tank_b == (y_enemy_t_3 )) && (x_tank_l <= (x_enemy_r_3 )) && (x_tank_r >= (x_enemy_l_3 ));
+    assign stop_left_by_enemy  = (x_tank_l == (x_enemy_r ))    && (y_tank_t <= (y_enemy_b ))   && (y_tank_b >= (y_enemy_t ))
+                                ||(x_tank_l == (x_enemy_r_2 )) && (y_tank_t <= (y_enemy_b_2 )) && (y_tank_b >= (y_enemy_t_2 ))
+                                ||(x_tank_l == (x_enemy_r_3 )) && (y_tank_t <= (y_enemy_b_3 )) && (y_tank_b >= (y_enemy_t_3 ));
+    assign stop_right_by_enemy = (x_tank_r == (x_enemy_l ))    && (y_tank_t <= (y_enemy_b ))   && (y_tank_b >= (y_enemy_t ))
+                                ||(x_tank_r == (x_enemy_l_2 )) && (y_tank_t <= (y_enemy_b_2 )) && (y_tank_b >= (y_enemy_t_2 ))
+                                ||(x_tank_r == (x_enemy_l_3 )) && (y_tank_t <= (y_enemy_b_3 )) && (y_tank_b >= (y_enemy_t_3 ));
     // Register Control
     always @(posedge clk_50MHz or negedge reset or posedge reset_location)
     begin
@@ -244,13 +377,6 @@ module pixel_gen(
         x_tank_next = x_tank_reg;       // no move
 
         if(refresh_tick) begin
-            // y_tank_next = y_tank_reg;       // no move
-            // x_tank_next = x_tank_reg;       // no move
-            // if ( reset_location) begin
-            //     y_tank_next <= Y_START;
-            //     x_tank_next <= X_START;
-            // end
-            // else 
             begin
                 if(up & (y_tank_t > tank_VELOCITY) & (y_tank_t > (Y_TOP + tank_VELOCITY)&& (|stop_up)==0) && !stop_up_by_enemy)
                     y_tank_next = y_tank_reg - tank_VELOCITY;  // move up
@@ -297,7 +423,7 @@ module pixel_gen(
     tank_down_rom   rom2(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data2));
     tank_left_rom   rom3(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data3));
     tank_right_rom  rom4(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data4));
-    boom_tank_rom        tank_boom(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data5));
+    boom_tank_rom   rom5(.clk(clk_50MHz), .row(row), .col(col), .color_data(rom_data5));
     
     // **** ROM BOUNDARIES / STATUS SIGNALS ****
     // tank rom data square boundaries
@@ -364,6 +490,8 @@ module pixel_gen(
                         .y_enemy_bullet(y_bullet_enemy),
                         .x_enemy_bullet_2(x_bullet_enemy_2),
                         .y_enemy_bullet_2(y_bullet_enemy_2),
+                        .x_enemy_bullet_3(x_bullet_enemy_3),
+                        .y_enemy_bullet_3(y_bullet_enemy_3),
                         .x_tank_bullet(sq_x_reg),
                         .y_tank_bullet(sq_y_reg),
                         .x_eagle(x_eagle),
@@ -442,7 +570,7 @@ module pixel_gen(
                             sq_x_next = sq_x_reg + SQUARE_VELOCITY;
                         end
                     endcase
-                    if ((sq_x_next > 607) || (sq_x_next < 28) || (sq_y_next > 447) || (sq_y_next < 28) || hit || enemy_detroyed || enemy_detroyed_2)
+                    if ((sq_x_next > 607) || (sq_x_next < 28) || (sq_y_next > 447) || (sq_y_next < 28) || hit || enemy_detroyed || enemy_detroyed_2 || enemy_detroyed_3)
                         state = IDLE;
                 end
             endcase
@@ -475,7 +603,7 @@ module pixel_gen(
     wire text_on;
     m100_counter counter_unit  (.clk(clk_50MHz),
                                 .reset(reset),
-                                .d_inc((reset_loc || reset_loc_2)),  
+                                .d_inc((reset_loc || reset_loc_2 || reset_loc_3)),  
                                 // .d_clr(reset),
                                 .dig0(dig0),
                                 .dig1(dig1),
@@ -503,9 +631,9 @@ module pixel_gen(
 //------------------------------------------------------//
     // Pixel Location Status Signals
     wire upper_yellow_on, lower_yellow_on, street_on, water_on, street_2_on;
-    wire [29:0] rom_sand    ;//= YELLOW;
-    wire [29:0] rom_water   ;//= BLUE;
-    wire [29:0] rom_road    ;//= BLACK;
+    wire [29:0] rom_sand   ;// = YELLOW;
+    wire [29:0] rom_water  ;// = BLUE;
+    wire [29:0] rom_road   ;// = BLACK;
     // Drivers for Status Signals
     assign upper_yellow_on  = ((x >= 32) && (x < 608) && (y >= 228) && (y < 260));
     assign lower_yellow_on  = ((x >= 32) && (x < 608) && (y >= 420) && (y < 452));
@@ -626,7 +754,7 @@ module pixel_gen(
                 else
                     rgb = rom_enemy;
             
-                        // enemy
+            // enemy 2
             else if(enemy_on_2 && lower_yellow_on)    
                 if(&rom_enemy_2 == 1)  
                     rgb = rom_road;
@@ -659,14 +787,42 @@ module pixel_gen(
                     rgb = rom_road;
                 else
                     rgb = rom_enemy_2;
-
-            else if(sq_on)
-                rgb = RED;
-            else if (bullet_on)
-                rgb = RED;
-            else if (bullet_on_2)
-                rgb = BLUE;
-
+            
+            // enemy 3
+            else if(enemy_on_3 && lower_yellow_on)    
+                if(&rom_enemy_3 == 1)  
+                    rgb = rom_road;
+                else
+                    rgb = rom_enemy_3;
+                
+                
+            else if(enemy_on_3 && upper_yellow_on) 
+                if(&rom_enemy_3 == 1)  
+                    rgb = rom_water;
+                else
+                    rgb = rom_enemy_3;
+        
+        
+            else if(enemy_on_3 && street_on)     
+                if(&rom_enemy_3 == 1 )  
+                    rgb = rom_sand;
+                else
+                    rgb = rom_enemy_3;
+            
+            
+            else if(enemy_on_3 && water_on)      
+                if(&rom_enemy_3 == 1)  
+                    rgb = rom_sand;
+                else
+                    rgb = rom_enemy_3;
+            
+            else if(enemy_on_3 && street_2_on)        
+                if(&rom_enemy_3 == 1) 
+                    rgb = rom_road;
+                else
+                    rgb = rom_enemy_3;
+            
+            // scoreboard
             else if(text_on)
                 if(|text_rgb==0)
                     rgb = RED;
@@ -728,7 +884,15 @@ module pixel_gen(
                 rgb = iron_rom;
             else if (|brick_on)
                 rgb = brick_rom;
-        
+            
+            else if(sq_on)
+                rgb = RED;
+            else if (bullet_on)
+                rgb = RED;
+            else if (bullet_on_2)
+                rgb = BLUE;
+            else if (bullet_on_3)
+                rgb = BLACK;
             // game board backgrounds    
             else if(upper_yellow_on)
                 rgb = rom_water;

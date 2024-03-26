@@ -8,6 +8,8 @@ module eagle (
     input [9:0] y_enemy_bullet,
     input [9:0] x_enemy_bullet_2,
     input [9:0] y_enemy_bullet_2,
+    input [9:0] x_enemy_bullet_3,
+    input [9:0] y_enemy_bullet_3,
     input [9:0] x_tank_bullet,
     input [9:0] y_tank_bullet,
     output reg [9:0] x_eagle,
@@ -58,7 +60,8 @@ module eagle (
             x_eagle_next = x_eagle;       // no move
             if (((y_enemy_bullet < y_eagle_b) && (y_enemy_bullet + 3 > y_eagle_t) && (x_enemy_bullet < x_eagle_r) && (x_enemy_bullet > x_eagle_l)) ||
                 ((y_tank_bullet  < y_eagle_b) && (y_tank_bullet + 3  > y_eagle_t) && (x_tank_bullet < x_eagle_r)  && (x_tank_bullet  > x_eagle_l)) ||
-                ((y_enemy_bullet_2 < y_eagle_b) && (y_enemy_bullet_2 + 3 > y_eagle_t) && (x_enemy_bullet_2 < x_eagle_r) && (x_enemy_bullet_2 > x_eagle_l))
+                ((y_enemy_bullet_2 < y_eagle_b) && (y_enemy_bullet_2 + 3 > y_eagle_t) && (x_enemy_bullet_2 < x_eagle_r) && (x_enemy_bullet_2 > x_eagle_l)) ||
+                ((y_enemy_bullet_3 < y_eagle_b) && (y_enemy_bullet_3 + 3 > y_eagle_t) && (x_enemy_bullet_3 < x_eagle_r) && (x_enemy_bullet_3 > x_eagle_l))
                 )             
                 begin
 

@@ -16,6 +16,14 @@ module enemy #( parameter number_of_brick = 100,
     input [9:0] x_tank,
     input [9:0] y_tank,
     input int enemy_index,
+    input enemy_stop_up_by_enemy,
+    input enemy_stop_down_by_enemy,
+    input enemy_stop_left_by_enemy,
+    input enemy_stop_right_by_enemy,
+    input enemy_stop_up_by_enemy_1,
+    input enemy_stop_down_by_enemy_1,
+    input enemy_stop_left_by_enemy_1,
+    input enemy_stop_right_by_enemy_1,
     output reg [9:0] x_enemy_l,
     output reg [9:0] x_enemy_r,
     output reg [9:0] y_enemy_t,
@@ -32,6 +40,8 @@ module enemy #( parameter number_of_brick = 100,
     localparam Y_START_ENEMY = 32;
     localparam X_START_ENEMY_1 = 192;
     localparam Y_START_ENEMY_1 = 32;
+    localparam X_START_ENEMY_2 = 512;
+    localparam Y_START_ENEMY_2 = 32;
     localparam enemy_speed = 1;
     localparam X_LEFT = 32;                 
     localparam X_RIGHT = 608;               
@@ -81,6 +91,10 @@ module enemy #( parameter number_of_brick = 100,
                     x_enemy_register <= X_START_ENEMY_1;
                     y_enemy_register <= Y_START_ENEMY_1;
                 end
+                3: begin
+                    x_enemy_register <= X_START_ENEMY_2;
+                    y_enemy_register <= Y_START_ENEMY_2;
+                end
             endcase
         end
         else begin
@@ -129,6 +143,10 @@ module enemy #( parameter number_of_brick = 100,
                         x_enemy_next <= X_START_ENEMY_1;
                         y_enemy_next <= Y_START_ENEMY_1;
                     end
+                    3: begin
+                        x_enemy_next <= X_START_ENEMY_2;
+                        y_enemy_next <= Y_START_ENEMY_2;
+                    end
                 endcase
                 // y_enemy_next <= Y_START_ENEMY;
                 // x_enemy_next <= X_START_ENEMY;
@@ -136,13 +154,13 @@ module enemy #( parameter number_of_brick = 100,
             else
             begin
                 change = 0;
-                if(up & (y_enemy_t > enemy_speed) & (y_enemy_t > (Y_TOP + enemy_speed)) && (|stop_up)==0 && !stop_up_by_tank)
+                if(up & (y_enemy_t > enemy_speed) & (y_enemy_t > (Y_TOP + enemy_speed)) && (|stop_up)==0 && !stop_up_by_tank && !enemy_stop_up_by_enemy && !enemy_stop_up_by_enemy_1)
                     y_enemy_next = y_enemy_register - enemy_speed;  // move up
-                else if(down & (y_enemy_b < (Y_MAX - enemy_speed)) & (y_enemy_b < (Y_BOTTOM - enemy_speed) && (|stop_down)==0) && !stop_down_by_tank)
+                else if(down & (y_enemy_b < (Y_MAX - enemy_speed)) & (y_enemy_b < (Y_BOTTOM - enemy_speed) && (|stop_down)==0) && !stop_down_by_tank && !enemy_stop_down_by_enemy && !enemy_stop_down_by_enemy_1)
                     y_enemy_next = y_enemy_register + enemy_speed;  // move down
-                else if(left & (x_enemy_l > enemy_speed) & (x_enemy_l > (X_LEFT + enemy_speed - 1) && (|stop_left)==0) && !stop_left_by_tank)
+                else if(left & (x_enemy_l > enemy_speed) & (x_enemy_l > (X_LEFT + enemy_speed - 1) && (|stop_left)==0) && !stop_left_by_tank && !enemy_stop_left_by_enemy && !enemy_stop_left_by_enemy_1)
                     x_enemy_next = x_enemy_register - enemy_speed;   // move left
-                else if(right & (x_enemy_r < (X_MAX - enemy_speed)) & (x_enemy_r < (X_RIGHT - enemy_speed) && (|stop_right)==0) && !stop_right_by_tank)
+                else if(right & (x_enemy_r < (X_MAX - enemy_speed)) & (x_enemy_r < (X_RIGHT - enemy_speed) && (|stop_right)==0) && !stop_right_by_tank && !enemy_stop_right_by_enemy && !enemy_stop_right_by_enemy_1)
                     x_enemy_next = x_enemy_register + enemy_speed;   // move right
                 // else if ((up    && !((y_enemy_t > enemy_speed) && (y_enemy_t > (Y_TOP + enemy_speed)) && (|stop_up)==0)) ||
                 //          (down  && !((y_enemy_b < (Y_MAX - enemy_speed)) && (y_enemy_b < (Y_BOTTOM - enemy_speed)) && (|stop_down)==0)) ||
@@ -214,12 +232,17 @@ module random_move (
                 1: begin
                     state = MOVE_RIGHT;
                     direction = 2'b11;
-                    lfsr_state = (enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
+                    lfsr_state = 8'b00000001;  // Initial state != 0
                 end
                 2: begin
                     state = MOVE_DOWN;
                     direction = 2'b01;
-                    lfsr_state = (enemy_index == 1) ? 8'b1 : 8'b00110011;  // Initial state != 0
+                    lfsr_state = 8'b00110011;  // Initial state != 0
+                end
+                3: begin
+                    state = MOVE_LEFT;
+                    direction = 2'b10;
+                    lfsr_state = 8'b00001111;  // Initial state != 0
                 end
             endcase
             
