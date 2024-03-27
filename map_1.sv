@@ -83,26 +83,26 @@ module map_1 #( parameter number_of_brick = 100,
     always @(posedge clk_50MHz or negedge reset) begin
         if (!reset) begin
             // IRON
-            x_iron_register[0] = 288;
-            y_iron_register[0] = 256;
-            x_iron_register[1] = 320;
-            y_iron_register[1] = 256;
-            x_iron_register[2] = 352;
-            y_iron_register[2] = 256;
-            
-            x_iron_register[3] = 128;
-            y_iron_register[3] = 256;
-            x_iron_register[4] = 192;
-            y_iron_register[4] = 256;
-            x_iron_register[5] = 160;
-            y_iron_register[5] = 256;
-            
-            x_iron_register[6] = 448;
-            y_iron_register[6] = 256;
-            x_iron_register[7] = 480;
-            y_iron_register[7] = 256;
-            x_iron_register[8] = 512;
-            y_iron_register[8] = 256;
+                x_iron_register[0] = 288;
+                y_iron_register[0] = 256;
+                x_iron_register[1] = 320;
+                y_iron_register[1] = 256;
+                x_iron_register[2] = 352;
+                y_iron_register[2] = 256;
+                
+                x_iron_register[3] = 128;
+                y_iron_register[3] = 256;
+                x_iron_register[4] = 192;
+                y_iron_register[4] = 256;
+                x_iron_register[5] = 160;
+                y_iron_register[5] = 256;
+                
+                x_iron_register[6] = 448;
+                y_iron_register[6] = 256;
+                x_iron_register[7] = 480;
+                y_iron_register[7] = 256;
+                x_iron_register[8] = 512;
+                y_iron_register[8] = 256;
             // 20 Bricks Cover Eagle
                 //    **
                 //   ****
@@ -170,45 +170,63 @@ module map_1 #( parameter number_of_brick = 100,
                     x_brick_register[19] = 368;
                     y_brick_register[19] = 400;
             // Build map
-            x_brick_register[20] = 32;
-            y_brick_register[20] = 96;
-            for (int i = 21; i < number_of_brick; i++) begin
-                bit odd_or_even;
-                x_brick_register[i] = x_brick_register[i-1] + 16;
-                if (x_brick_register[i] > 527)
-                begin
-                    odd_or_even ++;
-                    y_brick_register[i] = y_brick_register[i-1] + 64;
-                    x_brick_register[i] = odd_or_even ? (x_brick_register[0] + 80) : x_brick_register[0];
+                x_brick_register[20] = 96;
+                y_brick_register[20] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[20+i] = y_brick_register[20+i-1] + 16;
+                    x_brick_register[20+i] = x_brick_register[20+i-1];
                 end
-                else 
-                begin
-                    y_brick_register[i] = y_brick_register[i-1];
+                
+                x_brick_register[41] = 240;
+                y_brick_register[41] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[41+i] = y_brick_register[41+i-1] + 16;
+                    x_brick_register[41+i] = x_brick_register[41+i-1];
                 end
-            end
+                
+                x_brick_register[62] = 544;
+                y_brick_register[62] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[62+i] = y_brick_register[62+i-1] + 16;
+                    x_brick_register[62+i] = x_brick_register[62+i-1];
+                end
+                
+                x_brick_register[83] = 96+16;
+                y_brick_register[83] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[83+i] = y_brick_register[83+i-1] + 16;
+                    x_brick_register[83+i] = x_brick_register[83+i-1];
+                end
+
+                x_brick_register[104] = 240+16;
+                y_brick_register[104] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[104+i] = y_brick_register[104+i-1] + 16;
+                    x_brick_register[104+i] = x_brick_register[104+i-1];
+                end
+
+                x_brick_register[125] = 544+16;
+                y_brick_register[125] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[125+i] = y_brick_register[125+i-1] + 16;
+                    x_brick_register[125+i] = x_brick_register[125+i-1];
+                end
+
+                x_brick_register[146] = 400;
+                y_brick_register[146] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[146+i] = y_brick_register[146+i-1] + 16;
+                    x_brick_register[146+i] = x_brick_register[146+i-1];
+                end
+
+                x_brick_register[167] = 400+16;
+                y_brick_register[167] = 64;
+                for (int i = 1; i <= 20 ; i++) begin
+                    y_brick_register[167+i] = y_brick_register[167+i-1] + 16;
+                    x_brick_register[167+i] = x_brick_register[167+i-1];
+                end
         end
         else begin
-            // For Faster Compilation
-            x_iron_register[0] = 288;
-            y_iron_register[0] = 256;
-            x_iron_register[1] = 320;
-            y_iron_register[1] = 256;
-            x_iron_register[2] = 352;
-            y_iron_register[2] = 256;
-            
-            x_iron_register[3] = 128;
-            y_iron_register[3] = 256;
-            x_iron_register[4] = 192;
-            y_iron_register[4] = 256;
-            x_iron_register[5] = 160;
-            y_iron_register[5] = 256;
-            
-            x_iron_register[6] = 448;
-            y_iron_register[6] = 256;
-            x_iron_register[7] = 480;
-            y_iron_register[7] = 256;
-            x_iron_register[8] = 512;
-            y_iron_register[8] = 256;
             // State update logic
             x_brick_register[0] <= x_brick_next[0];
             y_brick_register[0] <= y_brick_next[0];

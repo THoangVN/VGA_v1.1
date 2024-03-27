@@ -18,7 +18,7 @@ module pixel_gen(
 //------------------------------------------------------//
 //                   MAP SETTING                        //
 //------------------------------------------------------//
-    localparam number_of_brick = 100;
+    localparam number_of_brick = 200;
     localparam number_of_iron = 10;
     wire hit, hit_by_enemy;
     wire hit_by_enemy_2;
@@ -632,14 +632,14 @@ module pixel_gen(
     // Pixel Location Status Signals
     wire upper_yellow_on, lower_yellow_on, street_on, water_on, street_2_on;
     wire [29:0] rom_sand   = YELLOW;
-    wire [29:0] rom_water  = BLUE;
+    wire [29:0] rom_water  = YELLOW;
     wire [29:0] rom_road   = BLACK;
     // Drivers for Status Signals
     assign upper_yellow_on  = ((x >= 32) && (x < 608) && (y >= 228) && (y < 260));
-    assign lower_yellow_on  = ((x >= 32) && (x < 608) && (y >= 420) && (y < 452));
-    assign street_on        = ((x >= 32) && (x < 608) && (y >= 260) && (y < 420));
-    assign street_2_on      = ((x >= 32) && (x < 608) && (y >= 31) && (y < 68));
-    assign water_on         = ((x >= 32) && (x < 608) && (y >= 68) && (y < 228));
+    assign lower_yellow_on  = ((x >= 32) && (x < 608) && (y >= 384) && (y < 452));
+    assign street_on        = ((x >= 32) && (x < 608) && (y >= 260) && (y < 384));
+    assign street_2_on      = ((x >= 32) && (x < 608) && (y >= 31) && (y < 96));
+    assign water_on         = ((x >= 32) && (x < 608) && (y >= 96) && (y < 228));
 
     // sand_rom    sand_unit  (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_sand));
     // water_rom   water_unit (.clk(clk_50MHz), .row(y), .col(x), .color_data(rom_water));
