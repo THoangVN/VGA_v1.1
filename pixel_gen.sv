@@ -98,7 +98,7 @@ module pixel_gen(
 //------------------------------------------------------//
 //                   ENEMY SETTING                      //
 //------------------------------------------------------//
-    wire enemy_on, bullet_on, enemy_on_2, bullet_on_2;
+    wire enemy_on, bullet_on, enemy_on_2, bullet_on_2, enemy_on_3, bullet_on_3;
     wire [29:0] rom_enemy;
     wire [29:0] rom_enemy_2;
     wire [29:0] rom_enemy_3;
@@ -155,7 +155,7 @@ module pixel_gen(
     assign stop_up_by_enemy_2_1     = ((y_enemy_b + 1) == y_enemy_t_2) && (x_enemy_l <= x_enemy_r_2) && (x_enemy_r >= x_enemy_l_2);
     assign stop_down_by_enemy_2_1   = ((y_enemy_t - 1) == y_enemy_b_2) && (x_enemy_l <= x_enemy_r_2) && (x_enemy_r >= x_enemy_l_2);
     assign stop_left_by_enemy_2_1   = ((x_enemy_r + 1) == x_enemy_l_2) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
-    assign stop_right_by_enemy_1_1  = ((x_enemy_l - 1) == x_enemy_r_2) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
+    assign stop_right_by_enemy_2_1  = ((x_enemy_l - 1) == x_enemy_r_2) && (y_enemy_t <= y_enemy_b_2) && (y_enemy_b >= y_enemy_t_2);
 
     assign stop_up_by_enemy_1_3     = ((y_enemy_b_3 + 1) == y_enemy_t) && (x_enemy_l <= x_enemy_r_3) && (x_enemy_r >= x_enemy_l_3);
     assign stop_down_by_enemy_1_3   = ((y_enemy_t_3 - 1) == y_enemy_b) && (x_enemy_l <= x_enemy_r_3) && (x_enemy_r >= x_enemy_l_3);
@@ -245,7 +245,7 @@ module pixel_gen(
                                                         .enemy_stop_up_by_enemy(stop_up_by_enemy_2_1),
                                                         .enemy_stop_down_by_enemy(stop_down_by_enemy_2_1),
                                                         .enemy_stop_left_by_enemy(stop_left_by_enemy_2_1),
-                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy2_1),
+                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy_2_1),
                                                         .enemy_stop_up_by_enemy_1(stop_up_by_enemy_2_3),
                                                         .enemy_stop_down_by_enemy_1(stop_down_by_enemy_2_3),
                                                         .enemy_stop_left_by_enemy_1(stop_left_by_enemy_2_3),
@@ -282,7 +282,7 @@ module pixel_gen(
                                                         .enemy_stop_up_by_enemy(stop_up_by_enemy_3_1),
                                                         .enemy_stop_down_by_enemy(stop_down_by_enemy_3_1),
                                                         .enemy_stop_left_by_enemy(stop_left_by_enemy_3_1),
-                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy3_1),
+                                                        .enemy_stop_right_by_enemy(stop_right_by_enemy_3_1),
                                                         .enemy_stop_up_by_enemy_1(stop_up_by_enemy_3_2),
                                                         .enemy_stop_down_by_enemy_1(stop_down_by_enemy_3_2),
                                                         .enemy_stop_left_by_enemy_1(stop_left_by_enemy_3_2),
