@@ -120,7 +120,7 @@ module enemy #( parameter number_of_brick = 100,
                             .y_bullet_t(y_bullet), 
                             .bullet_on(bullet_on));
     clk_divider  clk_div   (.clk_50MHz(clk_50MHz), .clk_50Hz(clk_50Hz));
-    random_move  rand_move (.clk(clk_50Hz), .rst(reset), .up(up), .down(down), .left(left), .right(right), .enemy_detroyed(hold_enemy_detroyed), .enemy_index(enemy_index));
+    random_move  rand_move (.clk(clk_50Hz), .rst(reset), .up(up), .down(down), .left(left), .right(right), .enemy_detroyed(hold_enemy_detroyed), .enemy_index(enemy_index), .change(change));
 
     assign enemy_detroyed       = ((y_tank_bullet < y_enemy_b) && ((y_tank_bullet+3) > y_enemy_t) && (x_tank_bullet < x_enemy_r) && ((x_tank_bullet+3) > x_enemy_l));
     assign stop_up_by_tank      = ((y_tank + 32) == y_enemy_t) && (x_tank <= x_enemy_r) && ((x_tank + 32) >= x_enemy_l);
@@ -148,25 +148,24 @@ module enemy #( parameter number_of_brick = 100,
                         y_enemy_next <= Y_START_ENEMY_2;
                     end
                 endcase
-                // y_enemy_next <= Y_START_ENEMY;
-                // x_enemy_next <= X_START_ENEMY;
             end
             else
             begin
                 change = 0;
-                if(up & (y_enemy_t > enemy_speed) & (y_enemy_t > (Y_TOP + enemy_speed)) && (|stop_up)==0 && !stop_up_by_tank && !enemy_stop_up_by_enemy && !enemy_stop_up_by_enemy_1)
+                if      (up     && (y_enemy_t > (Y_TOP + enemy_speed))      && (|stop_up)==0    && !stop_up_by_tank     && !enemy_stop_up_by_enemy      && !enemy_stop_up_by_enemy_1)
                     y_enemy_next = y_enemy_register - enemy_speed;  // move up
-                else if(down & (y_enemy_b < (Y_MAX - enemy_speed)) & (y_enemy_b < (Y_BOTTOM - enemy_speed) && (|stop_down)==0) && !stop_down_by_tank && !enemy_stop_down_by_enemy && !enemy_stop_down_by_enemy_1)
+                else if (down   && (y_enemy_b < (Y_BOTTOM - enemy_speed))   && (|stop_down)==0  && !stop_down_by_tank   && !enemy_stop_down_by_enemy    && !enemy_stop_down_by_enemy_1)
                     y_enemy_next = y_enemy_register + enemy_speed;  // move down
-                else if(left & (x_enemy_l > enemy_speed) & (x_enemy_l > (X_LEFT + enemy_speed - 1) && (|stop_left)==0) && !stop_left_by_tank && !enemy_stop_left_by_enemy && !enemy_stop_left_by_enemy_1)
+                else if (left   && (x_enemy_l > (X_LEFT + enemy_speed))     && (|stop_left)==0  && !stop_left_by_tank   && !enemy_stop_left_by_enemy    && !enemy_stop_left_by_enemy_1)
                     x_enemy_next = x_enemy_register - enemy_speed;   // move left
-                else if(right & (x_enemy_r < (X_MAX - enemy_speed)) & (x_enemy_r < (X_RIGHT - enemy_speed) && (|stop_right)==0) && !stop_right_by_tank && !enemy_stop_right_by_enemy && !enemy_stop_right_by_enemy_1)
+                else if (right  && (x_enemy_r < (X_RIGHT - enemy_speed))    && (|stop_right)==0 && !stop_right_by_tank  && !enemy_stop_right_by_enemy   && !enemy_stop_right_by_enemy_1)
                     x_enemy_next = x_enemy_register + enemy_speed;   // move right
-                // else if ((up    && !((y_enemy_t > enemy_speed) && (y_enemy_t > (Y_TOP + enemy_speed)) && (|stop_up)==0)) ||
-                //          (down  && !((y_enemy_b < (Y_MAX - enemy_speed)) && (y_enemy_b < (Y_BOTTOM - enemy_speed)) && (|stop_down)==0)) ||
-                //          (left  && !((x_enemy_l > enemy_speed) && (x_enemy_l > (X_LEFT + enemy_speed - 1)) && (|stop_left)==0)) ||
-                //          (right && !((x_enemy_r < (X_MAX - enemy_speed)) && (x_enemy_r < (X_RIGHT - enemy_speed)) && (|stop_right)==0)))
-                // change = 1;
+                
+                // Trigger "change"
+                if ((y_enemy_t <= (Y_TOP + enemy_speed))    || (|stop_up)!=0    || stop_up_by_tank      || enemy_stop_up_by_enemy       || enemy_stop_up_by_enemy_1     ||
+                    (y_enemy_b >= (Y_BOTTOM - enemy_speed)) || (|stop_down)!=0  || stop_down_by_tank    || enemy_stop_down_by_enemy     || enemy_stop_down_by_enemy_1   ||
+                    (x_enemy_l <= (X_LEFT + enemy_speed))   || (|stop_left)!=0  || stop_left_by_tank    || enemy_stop_left_by_enemy     || enemy_stop_left_by_enemy_1   ||
+                    (x_enemy_r >= (X_RIGHT - enemy_speed))  || (|stop_right)!=0 || stop_right_by_tank   || enemy_stop_right_by_enemy    || enemy_stop_right_by_enemy_1)     change = 1;
             end
         end
     end  
@@ -202,7 +201,7 @@ endmodule : enemy
 module random_move (
     input wire clk,
     input wire rst,
-    input wire change,
+    input change,
     input int enemy_detroyed,
     input int enemy_index,
     output reg up,
@@ -226,7 +225,7 @@ module random_move (
     assign {up, down, left, right} =  (enemy_detroyed != 0) ? 4'b0 : (direction==2'b00) ? 4'b1000 : (direction==2'b01) ? 4'b0100 : (direction==2'b10) ? 4'b0010 : 4'b0001;
 
     
-    always @(posedge clk or negedge rst/*or posedge change*/) begin
+    always @(posedge clk or negedge rst) begin
         if (!rst) begin
             case (enemy_index)
                 1: begin
@@ -244,8 +243,7 @@ module random_move (
                     direction = 2'b10;
                     lfsr_state = 8'b00001111;  // Initial state != 0
                 end
-            endcase
-            
+            endcase     
         end
         else begin
             // Update LFSR

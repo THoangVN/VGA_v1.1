@@ -171,56 +171,56 @@ module map_1 #( parameter number_of_brick = 100,
                     y_brick_register[19] = 400;
             // Build map
                 x_brick_register[20] = 96;
-                y_brick_register[20] = 64;
+                y_brick_register[20] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[20+i] = y_brick_register[20+i-1] + 16;
                     x_brick_register[20+i] = x_brick_register[20+i-1];
                 end
                 
                 x_brick_register[41] = 240;
-                y_brick_register[41] = 64;
+                y_brick_register[41] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[41+i] = y_brick_register[41+i-1] + 16;
                     x_brick_register[41+i] = x_brick_register[41+i-1];
                 end
                 
                 x_brick_register[62] = 544;
-                y_brick_register[62] = 64;
+                y_brick_register[62] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[62+i] = y_brick_register[62+i-1] + 16;
                     x_brick_register[62+i] = x_brick_register[62+i-1];
                 end
                 
                 x_brick_register[83] = 96+16;
-                y_brick_register[83] = 64;
+                y_brick_register[83] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[83+i] = y_brick_register[83+i-1] + 16;
                     x_brick_register[83+i] = x_brick_register[83+i-1];
                 end
 
                 x_brick_register[104] = 240+16;
-                y_brick_register[104] = 64;
+                y_brick_register[104] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[104+i] = y_brick_register[104+i-1] + 16;
                     x_brick_register[104+i] = x_brick_register[104+i-1];
                 end
 
                 x_brick_register[125] = 544+16;
-                y_brick_register[125] = 64;
+                y_brick_register[125] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[125+i] = y_brick_register[125+i-1] + 16;
                     x_brick_register[125+i] = x_brick_register[125+i-1];
                 end
 
                 x_brick_register[146] = 400;
-                y_brick_register[146] = 64;
+                y_brick_register[146] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[146+i] = y_brick_register[146+i-1] + 16;
                     x_brick_register[146+i] = x_brick_register[146+i-1];
                 end
 
                 x_brick_register[167] = 400+16;
-                y_brick_register[167] = 64;
+                y_brick_register[167] = 80;
                 for (int i = 1; i <= 20 ; i++) begin
                     y_brick_register[167+i] = y_brick_register[167+i-1] + 16;
                     x_brick_register[167+i] = x_brick_register[167+i-1];
